@@ -2,13 +2,22 @@ import UIKit
 
 
 class ProfileHeaderView: UIView {
-    
+ 
     var imageAvatar = UIImageView()
     var labelProfile = UILabel()
     var labelAvatar = UILabel()
     var button = UIButton()
     var textStatus = UILabel()
     var textAdd = UITextField()
+    
+    //Кнопка к заданию
+    let myButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Моя кнопка", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     
     func setupTextAdd() {
         textAdd.frame = CGRect(x: 185, y: 255, width: 180, height: 25)
@@ -62,6 +71,7 @@ class ProfileHeaderView: UIView {
         textStatus.textColor = .black
         textStatus.text = "Status"
     }
+    
  
     @objc func tapped() {
         UIView.animate(withDuration: 0.2){
