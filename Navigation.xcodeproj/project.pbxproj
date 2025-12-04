@@ -6,15 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		C8B9EE3F2EDB61F700D12A44 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B9EE332EDB61F700D12A44 /* ProfileViewController.swift */; };
-		C8B9EE442EDB626D00D12A44 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B9EE432EDB626D00D12A44 /* ProfileHeaderView.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		C8222E662E86935B00AC0F57 /* Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Navigation.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C8B9EE332EDB61F700D12A44 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
-		C8B9EE432EDB626D00D12A44 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -52,7 +45,6 @@
 		C8222E5D2E86935B00AC0F57 = {
 			isa = PBXGroup;
 			children = (
-				C8B9EE422EDB624E00D12A44 /* Profile */,
 				C8222E682E86935B00AC0F57 /* Navigation */,
 				C8222E672E86935B00AC0F57 /* Products */,
 			);
@@ -64,15 +56,6 @@
 				C8222E662E86935B00AC0F57 /* Navigation.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		C8B9EE422EDB624E00D12A44 /* Profile */ = {
-			isa = PBXGroup;
-			children = (
-				C8B9EE432EDB626D00D12A44 /* ProfileHeaderView.swift */,
-				C8B9EE332EDB61F700D12A44 /* ProfileViewController.swift */,
-			);
-			path = Profile;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,8 +132,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C8B9EE3F2EDB61F700D12A44 /* ProfileViewController.swift in Sources */,
-				C8B9EE442EDB626D00D12A44 /* ProfileHeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
