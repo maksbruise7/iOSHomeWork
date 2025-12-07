@@ -2,6 +2,8 @@ import UIKit
 
 class ProfileViewController: UIViewController {
 
+    
+    //"Верстка экранов для iOS. Auto Layout"
     lazy var profileView: ProfileHeaderView = {
         let view = ProfileHeaderView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -30,6 +32,7 @@ class ProfileViewController: UIViewController {
         profileView.setupLabelAvatar()
         profileView.setupButton()
     }
+    //"Верстка экранов для iOS. Auto Layout"
     func setupButtonConstraints() {
         NSLayoutConstraint.activate([
             profileView.myButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -37,6 +40,8 @@ class ProfileViewController: UIViewController {
             profileView.myButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
+    
+    //"Верстка экранов для iOS. Auto Layout"
     func setupContraints() {
        let safeArea = view.safeAreaLayoutGuide
        NSLayoutConstraint.activate([

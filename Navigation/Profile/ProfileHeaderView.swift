@@ -10,7 +10,7 @@ class ProfileHeaderView: UIView {
     var textStatus = UILabel()
     var textAdd = UITextField()
     
-    //Кнопка к заданию
+    //Кнопка к заданию "Верстка экранов для iOS. Auto Layout"
     let myButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Моя кнопка", for: .normal)
