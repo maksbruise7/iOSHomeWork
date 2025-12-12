@@ -1,55 +1,58 @@
 import UIKit
 
-
 class ProfileHeaderView: UIView {
- 
-    var imageAvatar = UIImageView()
-    var labelProfile = UILabel()
-    var labelAvatar = UILabel()
-    var button = UIButton()
-    var textStatus = UILabel()
-    var textAdd = UITextField()
-    
-    //Кнопка к заданию "Верстка экранов для iOS. Auto Layout"
-    let myButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Моя кнопка", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+    // Аватар
+    let avatarImageView: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "Avatar")
+        image.layer.cornerRadius = 75
+        image.clipsToBounds = true
+        image.layer.borderColor = UIColor.white.cgColor
+        image.layer.borderWidth = 3
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+    // Имя профиля
+    let fullNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Hipster Cat"
+        label.font = UIFont.systemFont(ofSize: 20)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    // Статус профиля
+    let statusLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .black
+        label.text = "Status"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
+    // Ввод для статуса
+    let statusTextField: UITextField = {
+        let text = UITextField()
+        text.font = UIFont.systemFont(ofSize: 15)
+        text.textColor = .black
+        text.placeholder = "Waiting for something..."
+        text.borderStyle = .roundedRect
+        text.layer.borderColor = UIColor.black.cgColor
+        text.layer.borderWidth = 1.0
+        text.backgroundColor = .white
+        text.layer.cornerRadius = 12
+        text.layer.masksToBounds = true
+        text.addTarget(self,
+                       action: #selector(tapped),
+                       for: .editingDidEnd
+        )
+        text.translatesAutoresizingMaskIntoConstraints = false
+        return text
+    }()
     
-    func setupTextAdd() {
-        textAdd.frame = CGRect(x: 185, y: 255, width: 180, height: 25)
-        textAdd.font = UIFont.systemFont(ofSize: 15)
-        textAdd.textColor = .black
-        textAdd.placeholder = "Waiting for something..."
-        textAdd.borderStyle = .roundedRect
-        textAdd.layer.borderColor = UIColor.black.cgColor
-        textAdd.layer.borderWidth = 1.0
-        textAdd.backgroundColor = .white
-        textAdd.layer.cornerRadius = 12
-        textAdd.layer.masksToBounds = true
-        textAdd.addTarget(self, action: #selector(tapped), for: .editingDidEnd)
-    }
-    
-    func setupImageAvatar() {
-        imageAvatar.image = UIImage(named: "Avatar")
-        imageAvatar.frame = CGRect(x: 16, y: 130, width: 150, height: 150)
-        imageAvatar.layer.cornerRadius = imageAvatar.frame.size.width / 2
-        imageAvatar.clipsToBounds = true
-        imageAvatar.layer.borderColor = UIColor.white.cgColor
-        imageAvatar.layer.borderWidth = 3
-    }
-    
-    func setupLabelAvatar() {
-        labelAvatar.frame = CGRect(x: 200, y: 157, width: 100, height: 20)
-        labelAvatar.text = "Hipster Cat"
-        labelAvatar.font = UIFont.systemFont(ofSize: 20)
-    }
-    
-    func setupButton() {
-        button.frame = CGRect(x: 16, y: 300, width: 370, height: 50)
+    // Кнопка для отправления статуса
+    let setStatusButton: UIButton = {
+        let button = UIButton(type: .system)
         button.setTitle("Show status", for: .normal)
         button.backgroundColor = .blue
         button.layer.cornerRadius = 4
@@ -63,31 +66,78 @@ class ProfileHeaderView: UIView {
                          action: #selector(tapped),
                          for: .touchUpInside
         )
-    }
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
-    func setupTextStatus() {
-        textStatus.frame = CGRect(x: 185, y: 225, width: 180, height: 25)
-        textStatus.font = UIFont.systemFont(ofSize: 14)
-        textStatus.textColor = .black
-        textStatus.text = "Status"
-    }
     
- 
-    @objc func tapped() {
-        UIView.animate(withDuration: 0.2){
-            self.button.backgroundColor = .black
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.17) {
-            UIView.animate(withDuration: 0.2){
-                self.button.backgroundColor = .blue
-            }
-        }
-        
-        if let text = textAdd.text {
-            textStatus.text = textAdd.text
-            print("\(text)")
-        }
-    }
-}
+    // Кнопка по заданию
+    let myButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Моя кнопка", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
 
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .lightGray
+        addSubview()
+        setupConstraints()
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func addSubview() {
+        addSubview(avatarImageView)
+        addSubview(fullNameLabel)
+        addSubview(statusLabel)
+        addSubview(statusTextField)
+        addSubview(setStatusButton)
+        addSubview(myButton)
+    }
+    
+    func setupConstraints() {
+        NSLayoutConstraint.activate([
+            avatarImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+            avatarImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 150),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 150),
+            
+            fullNameLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
+            fullNameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
+            fullNameLabel.widthAnchor.constraint(equalToConstant: 100),
+            fullNameLabel.heightAnchor.constraint(equalToConstant: 20),
+            
+            statusLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 95),
+            statusLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
+            statusLabel.widthAnchor.constraint(equalToConstant: 180),
+            statusLabel.heightAnchor.constraint(equalToConstant: 25),
+            
+            statusTextField.topAnchor.constraint(equalTo: self.topAnchor, constant: 125),
+            statusTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
+            statusTextField.widthAnchor.constraint(equalToConstant: 180),
+            statusTextField.heightAnchor.constraint(equalToConstant: 25),
+            
+            setStatusButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 182),
+            setStatusButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
+            setStatusButton.heightAnchor.constraint(equalToConstant: 50),
+            setStatusButton.widthAnchor.constraint(equalToConstant: 370),
+            
+            myButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 250),
+            myButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 115),
+            myButton.widthAnchor.constraint(equalToConstant: 180),
+            myButton.heightAnchor.constraint(equalToConstant: 25)
+        ])
+    }
+    
+    @objc func tapped() {
+           if let text = statusTextField.text {
+               statusLabel.text = statusTextField.text
+               print("\(text)")
+           }
+       }
+   }
 
