@@ -31,17 +31,11 @@ class ProfileHeaderView: UIView {
     }()
     
     // Ввод для статуса
-    let statusTextField: UITextField = {
+    lazy var statusTextField: UITextField = {
         let text = UITextField()
         text.font = UIFont.systemFont(ofSize: 15)
         text.textColor = .black
         text.placeholder = "Waiting for something..."
-        text.borderStyle = .roundedRect
-        text.layer.borderColor = UIColor.black.cgColor
-        text.layer.borderWidth = 1.0
-        text.backgroundColor = .white
-        text.layer.cornerRadius = 12
-        text.layer.masksToBounds = true
         text.addTarget(self,
                        action: #selector(tapped),
                        for: .editingDidEnd
@@ -51,7 +45,7 @@ class ProfileHeaderView: UIView {
     }()
     
     // Кнопка для отправления статуса
-    let setStatusButton: UIButton = {
+    lazy var setStatusButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Show status", for: .normal)
         button.backgroundColor = .blue

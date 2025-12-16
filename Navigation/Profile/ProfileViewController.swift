@@ -14,7 +14,6 @@ class ProfileViewController: UIViewController {
         constraints()
     }
     
-    
     func constraints() {
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
