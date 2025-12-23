@@ -23,19 +23,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let profileNavController = UINavigationController()
         
+        
         feedNavController.tabBarItem = UITabBarItem(title: "Feed", image: imageOne, tag: 0)
         profileNavController.tabBarItem = UITabBarItem(title: "Profile", image: imageTwo, tag: 1)
         
         feedNavController.viewControllers = [FeedViewController()]
-        profileNavController.viewControllers = [ProfileViewController()]
+        profileNavController.viewControllers = [LogInViewController()]
         
         tabbarController.viewControllers = [feedNavController, profileNavController]
         
         window?.rootViewController = tabbarController
         window?.makeKeyAndVisible()
         
-        
-        
+    
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
