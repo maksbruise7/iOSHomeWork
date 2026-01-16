@@ -15,6 +15,22 @@ class LogInViewController: UIViewController{
         return contentView
     }()
     
+    let stackView: UIStackView = {
+       let stackView = UIStackView()
+        stackView.backgroundColor = .lightGray
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fillProportionally
+        stackView.layer.borderWidth = 0.5
+        stackView.layer.cornerRadius = 10
+        stackView.layer.masksToBounds = true
+        stackView.spacing = 0.5
+        stackView.layer.borderColor = UIColor.lightGray.cgColor
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -69,11 +85,15 @@ class LogInViewController: UIViewController{
     func addSubbview() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
+        contentView.addSubview(imageVk)
+        contentView.addSubview(stackView)
+        contentView.addSubview(logInButton)
+        stackView.addArrangedSubview(logInAcccount)
+        stackView.addArrangedSubview(password)
     }
     
     func setupConstraints() {
         let safeAreaGuide = view.safeAreaLayoutGuide
-        
         NSLayoutConstraint.activate([
             // ScrollView занимает всё пространство
             scrollView.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor),
@@ -89,75 +109,66 @@ class LogInViewController: UIViewController{
         ])
     }
     
+    //Vk
+    let imageVk: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "VK")
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+    
+    //Логин аккаунта
+    let logInAcccount: UITextField = {
+        let login = UITextField()
+        login.textColor = .black
+        login.font = .systemFont(ofSize: 16)
+        login.placeholder = "  Email or phone"
+        login.keyboardType = .emailAddress
+        login.returnKeyType = .done
+        login.autocapitalizationType = .none
+        login.backgroundColor = .systemGray6
+        login.translatesAutoresizingMaskIntoConstraints = false
+        return login
+    }()
+    
+    //Пароль аккаунта
+    let password: UITextField = {
+        let password = UITextField()
+        password.textColor = .black
+        password.font = .systemFont(ofSize: 16)
+        password.placeholder = "  Password"
+        password.keyboardType = .emailAddress
+        password.returnKeyType = .done
+        password.isSecureTextEntry = true
+        password.autocapitalizationType = .none
+        password.backgroundColor = .systemGray6
+        password.translatesAutoresizingMaskIntoConstraints = false
+        return password
+    }()
+    
+    //Кнопка логина
+    lazy var logInButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = UIColor(named: "Color")
+        button.layer.cornerRadius = 10
+        button.setTitle("Log in", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(showProfile), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     func setupContent() {
-        //Vk
-        let imageVk: UIImageView = {
-            let image = UIImageView()
-            image.image = UIImage(named: "VK")
-            image.translatesAutoresizingMaskIntoConstraints = false
-            return image
-        }()
-        //Логин аккаунта
-        let logInAcccount: UITextField = {
-            let login = UITextField()
-            login.textColor = .black
-            login.font = UIFont.systemFont(ofSize: 16)
-            login.placeholder = "Email or phone"
-            login.borderStyle = .roundedRect
-            login.keyboardType = .emailAddress
-            login.returnKeyType = .done
-            login.backgroundColor = .systemGray6
-            login.autocapitalizationType = .none
-            login.translatesAutoresizingMaskIntoConstraints = false
-            return login
-        }()
-        //Пароль аккаунта
-        let password: UITextField = {
-            let login = UITextField()
-            login.textColor = .black
-            login.font = UIFont.systemFont(ofSize: 16)
-            login.placeholder = "Password"
-            login.borderStyle = .roundedRect
-            login.keyboardType = .emailAddress
-            login.returnKeyType = .done
-            login.backgroundColor = .systemGray6
-            login.isSecureTextEntry = true
-            login.autocapitalizationType = .none
-            login.translatesAutoresizingMaskIntoConstraints = false
-            return login
-        }()
-        //Кнопка логина
-        let logInButton: UIButton = {
-            let button = UIButton(type: .system)
-            button.backgroundColor = UIColor(named: "Color")
-            button.layer.cornerRadius = 10
-            button.setTitle("Log in", for: .normal)
-            button.setTitleColor(.white, for: .normal)
-            button.addTarget(self, action: #selector(showProfile), for: .touchUpInside)
-            button.translatesAutoresizingMaskIntoConstraints = false
-            return button
-        }()
-        
-        contentView.addSubview(imageVk)
-        contentView.addSubview(logInAcccount)
-        contentView.addSubview(password)
-        contentView.addSubview(logInButton)
-        
         NSLayoutConstraint.activate([
         imageVk.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 120),
         imageVk.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
         imageVk.widthAnchor.constraint(equalToConstant: 100),
         imageVk.heightAnchor.constraint(equalToConstant: 100),
         
-        logInAcccount.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 340),
-        logInAcccount.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-        logInAcccount.widthAnchor.constraint(equalToConstant: 384),
-        logInAcccount.heightAnchor.constraint(equalToConstant: 50),
-        
-        password.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 390),
-        password.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-        password.widthAnchor.constraint(equalToConstant: 384),
-        password.heightAnchor.constraint(equalToConstant: 50),
+        stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 340),
+        stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+        stackView.widthAnchor.constraint(equalToConstant: 384),
+        stackView.heightAnchor.constraint(equalToConstant: 100),
         
         logInButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 456),
         logInButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -169,7 +180,8 @@ class LogInViewController: UIViewController{
     
     @objc func showProfile() {
         let showProfile = ProfileViewController()
-        navigationController?.pushViewController(showProfile, animated: true)
+        showProfile.modalPresentationStyle = .currentContext
+        present(showProfile, animated: true, completion: nil)
     }
     
 }
