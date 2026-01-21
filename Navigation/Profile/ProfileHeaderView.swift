@@ -1,6 +1,7 @@
 import UIKit
 
 class ProfileHeaderView: UIView {
+    
     // Аватар
     let avatarImageView: UIImageView = {
         let image = UIImageView()
@@ -12,6 +13,7 @@ class ProfileHeaderView: UIView {
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
+    
     // Имя профиля
     let fullNameLabel: UILabel = {
         let label = UILabel()
@@ -20,6 +22,7 @@ class ProfileHeaderView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     // Статус профиля
     let statusLabel: UILabel = {
         let label = UILabel()
@@ -36,9 +39,10 @@ class ProfileHeaderView: UIView {
         text.font = UIFont.systemFont(ofSize: 15)
         text.textColor = .black
         text.placeholder = "Waiting for something..."
-        text.addTarget(self,
-                       action: #selector(tapped),
-                       for: .editingDidEnd
+        text.addTarget(
+            self,
+            action: #selector(tapped),
+            for: .touchUpInside
         )
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
@@ -56,24 +60,15 @@ class ProfileHeaderView: UIView {
         button.layer.shadowOffset = CGSize(width: 4, height: 4)
         button.layer.shadowRadius = 10
         button.layer.shadowOpacity = 0.7
-        button.addTarget(self,
-                         action: #selector(tapped),
-                         for: .touchUpInside
+        button.addTarget(
+            self,
+            action: #selector(tapped),
+            for: .touchUpInside
         )
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    
-    // Кнопка по заданию
-    let myButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Моя кнопка", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .lightGray
@@ -90,7 +85,6 @@ class ProfileHeaderView: UIView {
         addSubview(statusLabel)
         addSubview(statusTextField)
         addSubview(setStatusButton)
-        addSubview(myButton)
     }
     
     func setupConstraints() {
@@ -119,11 +113,6 @@ class ProfileHeaderView: UIView {
             setStatusButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
             setStatusButton.heightAnchor.constraint(equalToConstant: 50),
             setStatusButton.widthAnchor.constraint(equalToConstant: 370),
-            
-            myButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 250),
-            myButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 115),
-            myButton.widthAnchor.constraint(equalToConstant: 180),
-            myButton.heightAnchor.constraint(equalToConstant: 25)
         ])
     }
     
@@ -133,5 +122,21 @@ class ProfileHeaderView: UIView {
                print("\(text)")
            }
        }
+    
+    
    }
 
+extension UITableView {
+    func setAndLayout(headerView: UIView) {
+        tableHeaderView = headerView
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            headerView.widthAnchor.constraint(equalTo: widthAnchor)
+        ])
+        
+        headerView.setNeedsLayout()
+        headerView.layoutIfNeeded()
+        headerView.frame.size = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+    }
+}

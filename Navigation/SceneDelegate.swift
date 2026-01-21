@@ -18,9 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let imageTwo = UIImage(named: "Horse")
         
         let tabbarController = UITabBarController()
-        
         let feedNavController =  UINavigationController()
-        
         let profileNavController = UINavigationController()
         
         
@@ -34,8 +32,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window?.rootViewController = tabbarController
         window?.makeKeyAndVisible()
-        
-    
+
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
