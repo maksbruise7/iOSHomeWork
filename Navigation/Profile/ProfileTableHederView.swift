@@ -127,13 +127,15 @@ class ProfileTableHederView: UIView{
             
             stackView.topAnchor.constraint(equalTo: imageVk.bottomAnchor, constant: 120),
             stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            stackView.widthAnchor.constraint(equalToConstant: 384),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             stackView.heightAnchor.constraint(equalToConstant: 100),
             
             logInButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16),
             logInButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             logInButton.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
-            logInButton.widthAnchor.constraint(equalToConstant: 384),
+            logInButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            logInButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             logInButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }

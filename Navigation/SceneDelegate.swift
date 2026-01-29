@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         feedNavController.viewControllers = [FeedViewController()]
         profileNavController.viewControllers = [LogInViewController()]
         
-        tabbarController.viewControllers = [feedNavController, profileNavController]
+        tabbarController.viewControllers = [profileNavController, feedNavController]
         
         window?.rootViewController = tabbarController
         window?.makeKeyAndVisible()
