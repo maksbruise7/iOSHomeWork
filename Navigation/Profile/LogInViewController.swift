@@ -1,194 +1,81 @@
 import UIKit
 
 class LogInViewController: UIViewController{
-    //scrollView
-    let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.showsVerticalScrollIndicator = true
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
-    //contentView
-    let contentView: UIView = {
-        let contentView = UIView()
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        return contentView
+    
+    lazy var profileView: ProfileTableHederView = {
+        let view = ProfileTableHederView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
-    let stackView: UIStackView = {
-       let stackView = UIStackView()
-        stackView.backgroundColor = .lightGray
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .fillProportionally
-        stackView.layer.borderWidth = 0.5
-        stackView.layer.cornerRadius = 10
-        stackView.layer.masksToBounds = true
-        stackView.spacing = 0.5
-        stackView.layer.borderColor = UIColor.lightGray.cgColor
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        tabBarController?.tabBar.isHidden = true
-        addSubbview()
-        setupConstraints()
-        setupContent()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-           super.viewWillAppear(animated)
-           setupKeyboardObservers()
-       }
-       
-       override func viewWillDisappear(_ animated: Bool) {
-           super.viewWillDisappear(animated)
-           removeKeyboardObservers()
-       }
-       
-       @objc func willShowKeyboard(_ notification: NSNotification) {
-           let keyboardHeight = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height
-           scrollView.contentInset.bottom += keyboardHeight ?? 0.0
-       }
-       
-       @objc func willHideKeyboard(_ notification: NSNotification) {
-           scrollView.contentInset.bottom = 0.0
-       }
-    
-    private func setupKeyboardObservers() {
-            let notificationCenter = NotificationCenter.default
-            
-            notificationCenter.addObserver(
-                self,
-                selector: #selector(self.willShowKeyboard(_:)),
-                name: UIResponder.keyboardWillShowNotification,
-                object: nil
-            )
-            
-            notificationCenter.addObserver(
-                self,
-                selector: #selector(self.willHideKeyboard(_:)),
-                name: UIResponder.keyboardWillHideNotification,
-                object: nil
-            )
-        }
-        
-        private func removeKeyboardObservers() {
-            let notificationCenter = NotificationCenter.default
-            notificationCenter.removeObserver(self)
-        }
-    
-    func addSubbview() {
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        contentView.addSubview(imageVk)
-        contentView.addSubview(stackView)
-        contentView.addSubview(logInButton)
-        stackView.addArrangedSubview(logInAcccount)
-        stackView.addArrangedSubview(password)
-    }
-    
-    func setupConstraints() {
-        let safeAreaGuide = view.safeAreaLayoutGuide
-        NSLayoutConstraint.activate([
-            // ScrollView занимает всё пространство
-            scrollView.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: safeAreaGuide.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: safeAreaGuide.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: safeAreaGuide.bottomAnchor),
-            
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
-        ])
-    }
-    
-    //Vk
-    let imageVk: UIImageView = {
-        let image = UIImageView()
-        image.image = UIImage(named: "VK")
-        image.translatesAutoresizingMaskIntoConstraints = false
-        return image
-    }()
-    
-    //Логин аккаунта
-    let logInAcccount: UITextField = {
-        let login = UITextField()
-        login.textColor = .black
-        login.font = .systemFont(ofSize: 16)
-        login.placeholder = "  Email or phone"
-        login.keyboardType = .emailAddress
-        login.returnKeyType = .done
-        login.autocapitalizationType = .none
-        login.backgroundColor = .systemGray6
-        login.translatesAutoresizingMaskIntoConstraints = false
-        return login
-    }()
-    
-    //Пароль аккаунта
-    let password: UITextField = {
-        let password = UITextField()
-        password.textColor = .black
-        password.font = .systemFont(ofSize: 16)
-        password.placeholder = "  Password"
-        password.keyboardType = .emailAddress
-        password.returnKeyType = .done
-        password.isSecureTextEntry = true
-        password.autocapitalizationType = .none
-        password.backgroundColor = .systemGray6
-        password.translatesAutoresizingMaskIntoConstraints = false
-        return password
-    }()
-    
-    //Кнопка логина
-    lazy var logInButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = UIColor(named: "Color")
-        button.layer.cornerRadius = 10
-        button.setTitle("Log in", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.addTarget(self, action: #selector(showProfile), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    func setupContent() {
-        NSLayoutConstraint.activate([
-        imageVk.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 120),
-        imageVk.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-        imageVk.widthAnchor.constraint(equalToConstant: 100),
-        imageVk.heightAnchor.constraint(equalToConstant: 100),
-        
-        stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 340),
-        stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-        stackView.widthAnchor.constraint(equalToConstant: 384),
-        stackView.heightAnchor.constraint(equalToConstant: 100),
-        
-        logInButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 456),
-        logInButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-        logInButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-        logInButton.widthAnchor.constraint(equalToConstant: 384),
-        logInButton.heightAnchor.constraint(equalToConstant: 50)
-        ])
+    //Метод добавляет свойство для кнопки
+    func tapped() {
+        profileView.logInButton.addTarget(
+            self,
+            action: #selector(showProfile),
+            for: .touchUpInside
+        )
     }
     
     @objc func showProfile() {
         let showProfile = ProfileViewController()
-        showProfile.modalPresentationStyle = .currentContext
-        present(showProfile, animated: true, completion: nil)
+        showProfile.modalPresentationStyle = .fullScreen
+        navigationController?.pushViewController(showProfile, animated: true)
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        view.addSubview(profileView)
+        constraints()
+        tapped()
+        notification()
+    }
+    
+    func notification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    @objc func keyboardWillShow(notification: NSNotification) {
+            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+                let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
+                profileView.scrollView.contentInset = contentInsets
+                profileView.scrollView.scrollIndicatorInsets = contentInsets
+            }
+        }
+
+        @objc func keyboardWillHide(notification: NSNotification) {
+            profileView.scrollView.contentInset = .zero
+            profileView.scrollView.scrollIndicatorInsets = .zero
+        }
+    
+    func constraints() {
+        let safeArea = view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            profileView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            profileView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            profileView.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
+            profileView.heightAnchor.constraint(equalTo: safeArea.heightAnchor)
+        ])
+    }
 }
 
 extension LogInViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ logInAcccount: UITextField) -> Bool {
+    func textFieldShouldReturn(
+        _ logInAcccount: UITextField
+    ) -> Bool {
         logInAcccount.resignFirstResponder()
         return true
     }
 }
+

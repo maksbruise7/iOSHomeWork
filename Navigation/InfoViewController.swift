@@ -15,14 +15,13 @@ class InfoViewController: UIViewController {
         button.titleLabel!.font = UIFont.systemFont(ofSize: 30)
         button.addTarget(self, action: #selector(tapped), for: .touchUpInside)
         view.addSubview(button)
-        
-        
     }
     
     @objc func tapped() {
-        let alertController = UIAlertController(title: "Заголовок",
-                                                message: "Сообщение",
-                                                preferredStyle: .alert
+        let alertController = UIAlertController(
+            title: "Заголовок",
+            message: "Сообщение",
+            preferredStyle: .alert
         )
         
         let cancelAction = UIAlertAction(title: "Отмена", style: .cancel){_ in

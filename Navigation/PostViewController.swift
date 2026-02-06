@@ -19,16 +19,17 @@ class PostViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.backgroundColor = .green
         title = post.title
-        
-        let play = UIBarButtonItem(title: "New controller ", style: .plain, target: self, action: #selector(clickPush))
+        let play = UIBarButtonItem(
+            title: "New controller ",
+            style: .plain,
+            target: self,
+            action: #selector(clickPush)
+        )
         navigationItem.rightBarButtonItem = play
-        
-
     }
-    
+
     @objc func clickPush() {
         let next = InfoViewController()
         next.modalPresentationStyle = .formSheet
