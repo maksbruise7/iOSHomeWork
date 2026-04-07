@@ -37,7 +37,14 @@ class ProfileViewController: UIViewController {
     }
 
     func setupView() {
-        view.backgroundColor = .white
+#if DEBUG
+    // Цвет для Debug (например, чтобы сразу видеть, что это тестовая сборка)
+    view.backgroundColor = .systemYellow
+    #else
+    // Цвет для Release
+    view.backgroundColor = .systemBackground
+    #endif
+//        view.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = false
     }
     
