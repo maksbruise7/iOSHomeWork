@@ -1,4 +1,5 @@
 import UIKit
+import iOSIntPackage
 
 class PostTableViewCell: UITableViewCell {
     
@@ -83,9 +84,20 @@ class PostTableViewCell: UITableViewCell {
     
     func configurat(_ model: PostArray) {
         author.text = model.author
-        image.image = UIImage(named: model.image)
         descrip.text = model.descrip
         likes.text = "Likes: \(String(model.likes))"
         views.text = "Views: \(String(model.views))"
+        
+        // 1. Получаем исходное изображение
+        guard let sourceImage = UIImage(named: model.image) else { return }
+        
+        // 2. Создаем экземпляр процессора
+        let processor = ImageProcessor()
+
+        // 3. Вызываем метод фильтрации
+        processor.processImage(sourceImage: sourceImage, filter: .colorInvert) { [weak self] processedImage in
+            // 4. Устанавливаем обработанное изображение
+            self?.image.image = processedImage
+        }
     }
 }

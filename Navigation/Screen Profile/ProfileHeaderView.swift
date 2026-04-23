@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 class ProfileHeaderView: UIView {
     
@@ -88,33 +89,68 @@ class ProfileHeaderView: UIView {
     }
     
     func setupConstraints() {
-        NSLayoutConstraint.activate([
-            avatarImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
-            avatarImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 150),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 150),
-            
-            fullNameLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
-            fullNameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
-            fullNameLabel.widthAnchor.constraint(equalToConstant: 100),
-            fullNameLabel.heightAnchor.constraint(equalToConstant: 20),
-            
-            statusLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 95),
-            statusLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
-            statusLabel.widthAnchor.constraint(equalToConstant: 180),
-            statusLabel.heightAnchor.constraint(equalToConstant: 25),
-            
-            statusTextField.topAnchor.constraint(equalTo: self.topAnchor, constant: 125),
-            statusTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
-            statusTextField.widthAnchor.constraint(equalToConstant: 180),
-            statusTextField.heightAnchor.constraint(equalToConstant: 25),
-            
-            setStatusButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 182),
-            setStatusButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            setStatusButton.heightAnchor.constraint(equalToConstant: 50),
-            setStatusButton.widthAnchor.constraint(equalToConstant: 370)
-        ])
+        avatarImageView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(16)
+            make.size.equalTo(150)
+        }
+        
+        fullNameLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(50)
+            make.leading.equalToSuperview().offset(185)
+            make.width.equalTo(100)
+            make.height.equalTo(20)
+        }
+        
+        statusLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(95)
+            make.leading.equalToSuperview().offset(185)
+            make.width.equalTo(180)
+            make.height.equalTo(25)
+        }
+        
+        statusTextField.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(125)
+            make.leading.equalToSuperview().offset(185)
+            make.width.equalTo(180)
+            make.height.equalTo(25)
+        }
+        
+        setStatusButton.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(182)
+            make.leading.equalToSuperview().offset(16)
+            make.height.equalTo(50)
+            make.width.equalTo(370)
+        }
     }
+//    func setupConstraints() {
+//        NSLayoutConstraint.activate([
+//            avatarImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+//            avatarImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
+//            avatarImageView.widthAnchor.constraint(equalToConstant: 150),
+//            avatarImageView.heightAnchor.constraint(equalToConstant: 150),
+//            
+//            fullNameLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
+//            fullNameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
+//            fullNameLabel.widthAnchor.constraint(equalToConstant: 100),
+//            fullNameLabel.heightAnchor.constraint(equalToConstant: 20),
+//            
+//            statusLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 95),
+//            statusLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
+//            statusLabel.widthAnchor.constraint(equalToConstant: 180),
+//            statusLabel.heightAnchor.constraint(equalToConstant: 25),
+//            
+//            statusTextField.topAnchor.constraint(equalTo: self.topAnchor, constant: 125),
+//            statusTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
+//            statusTextField.widthAnchor.constraint(equalToConstant: 180),
+//            statusTextField.heightAnchor.constraint(equalToConstant: 25),
+//            
+//            setStatusButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 182),
+//            setStatusButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
+//            setStatusButton.heightAnchor.constraint(equalToConstant: 50),
+//            setStatusButton.widthAnchor.constraint(equalToConstant: 370)
+//        ])
+//    }
     
     @objc func tapped() {
            if let text = statusTextField.text {

@@ -1,8 +1,5 @@
 import UIKit
-
-struct Post {
-    let title: String
-}
+import StorageService
 
 class PostViewController: UIViewController {
 
