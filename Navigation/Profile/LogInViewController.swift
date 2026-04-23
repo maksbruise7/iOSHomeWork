@@ -8,6 +8,33 @@ class LogInViewController: UIViewController{
         return view
     }()
     
+    private let userService: UserService = {
+            let testUser = User(
+                login: "admin",
+                fullName: "Hipster Cat",
+                avatar: UIImage(named: "Avatar") ?? UIImage(),
+                status: "Waiting for something..."
+            )
+            return CurrentUserService(user: testUser)
+        }()
+
+        @objc private func logInButtonTapped() {
+            let login = profileView.logInAccount.text ?? ""
+            
+            // Проверяем пользователя
+            if let authenticatedUser = userService.getUser(login: login) {
+                let profileVC = ProfileViewController()
+                profileVC.user = authenticatedUser // Передаем объект пользователя
+                navigationController?.pushViewController(profileVC, animated: true)
+            } else {
+                // Вывод сообщения о некорректных данных
+                let alert = UIAlertController(title: "Ошибка", message: "Неверный логин", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "ОК", style: .default))
+                present(alert, animated: true)
+                print("Некорректный логин: \(login)")
+            }
+        }
+    
     //Метод добавляет свойство для кнопки
     func tapped() {
         profileView.logInButton.addTarget(
