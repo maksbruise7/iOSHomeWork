@@ -49,6 +49,7 @@ class ProfileViewController: UIViewController {
         profileHeaderView.avatarImageView.image = user.avatar
     }
     
+    
     func setupView() {
 #if DEBUG
     // Цвет для Debug (например, чтобы сразу видеть, что это тестовая сборка)
@@ -110,13 +111,12 @@ extension ProfileViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-            if section == 0 {
-                let headerView = ProfileHeaderView()
-                return headerView
-            } else {
-                return nil
-            }
+        if section == 0 {
+            return profileHeaderView
+        } else {
+            return nil
         }
+    }
 
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

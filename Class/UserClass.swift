@@ -1,13 +1,13 @@
 import UIKit
 
-// Класс пользователя
+//      Модель пользователя
 class User {
     let login: String
     let fullName: String
-    let avatar: UIImage?
+    let avatar: UIImage
     let status: String
     
-    init(login: String, fullName: String, avatar: UIImage?, status: String) {
+    init(login: String, fullName: String, avatar: UIImage, status: String) {
         self.login = login
         self.fullName = fullName
         self.avatar = avatar
@@ -15,20 +15,44 @@ class User {
     }
 }
 
-// Протокол сервиса
+//      Протокол сервиса пользователей
 protocol UserService {
-    func getUser(login: String) -> User?
+    func getUser(byLogin login: String) -> User?
 }
 
-// Реализация сервиса для текущего пользователя
+//      Сервис текущего пользователя
 class CurrentUserService: UserService {
-    let user: User
+    private let user: User
     
     init(user: User) {
         self.user = user
     }
     
-    func getUser(login: String) -> User? {
-        return login == user.login ? user : nil
+    func getUser(byLogin login: String) -> User? {
+        if login == user.login {
+            return user
+        }
+        return nil
+    }
+}
+
+class TestUserService: UserService {
+    private let testUser: User
+    
+    init() {
+//      Создаем тестового пользователя с явно тестовыми данными
+        self.testUser = User(
+            login: "test_user",
+            fullName: "Test User Debug",
+            avatar: UIImage(systemName: "person.circle.fill") ?? UIImage(),
+            status: "This is a DEBUG test account"
+        )
+    }
+    
+    func getUser(byLogin login: String) -> User? {
+        if login == testUser.login {
+            return testUser
+        }
+        return nil
     }
 }
