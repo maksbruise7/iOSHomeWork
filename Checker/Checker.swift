@@ -3,26 +3,29 @@ import Foundation
 final class Checker {
     static let shared = Checker()
     
-//      Статические данные для проверки
-    private let validLogin = "admin"
-    private let validPassword = "password123"
+    private var validLogin: String
+    private var validPassword: String
     
-//      Тестовые данные для DEBUG режима
-    #if DEBUG
-    private let testLogin = "test_user"
-    private let testPassword = "test123"
-    #endif
+//      Приватный инициализатор для синглтона
+    private init() {
+//      Данные теперь будут устанавливаться через метод setup
+        self.validLogin = ""
+        self.validPassword = ""
+    }
     
-    private init() {}
+//      Метод для настройки данных проверки
+    func setup(login: String, password: String) {
+//      Используем guard чтобы данные можно было установить только один раз
+        guard validLogin.isEmpty && validPassword.isEmpty else {
+            print("Checker уже настроен")
+            return
+        }
+        
+        self.validLogin = login
+        self.validPassword = password
+    }
     
     func check(login: String, password: String) -> Bool {
-        #if DEBUG
-//      В DEBUG режиме проверяем и реального, и тестового пользователя
-        return (login == validLogin && password == validPassword) ||
-               (login == testLogin && password == testPassword)
-        #else
-//      В RELEASE режиме только реального пользователя
         return login == validLogin && password == validPassword
-        #endif
     }
 }
