@@ -3,6 +3,7 @@ import SnapKit
 
 class ProfileHeaderView: UIView {
     
+    
     // Аватар
     let avatarImageView: UIImageView = {
         let image = UIImageView()
