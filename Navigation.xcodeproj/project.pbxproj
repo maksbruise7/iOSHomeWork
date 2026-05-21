@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C850BCE42F8FA243002F84D0 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C850BCE32F8FA243002F84D0 /* SnapKit */; };
 		C850BCE92F8FA3AB002F84D0 /* iOSIntPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C850BCE82F8FA3AB002F84D0 /* iOSIntPackage */; };
+		C8AB2BA92F9A63CF00DA3732 /* UserClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AB2BA82F9A63CF00DA3732 /* UserClass.swift */; };
 		C8C0C30C2F8505D800AADEC8 /* StorageService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8C0C3042F8505D800AADEC8 /* StorageService.framework */; };
 		C8C0C30D2F8505D800AADEC8 /* StorageService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C8C0C3042F8505D800AADEC8 /* StorageService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		C8222E662E86935B00AC0F57 /* Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Navigation.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8AB2BA82F9A63CF00DA3732 /* UserClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClass.swift; sourceTree = "<group>"; };
 		C8C0C3042F8505D800AADEC8 /* StorageService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StorageService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -92,6 +94,7 @@
 		C8222E5D2E86935B00AC0F57 = {
 			isa = PBXGroup;
 			children = (
+				C8AB2BA62F9A637B00DA3732 /* Class */,
 				C8222E682E86935B00AC0F57 /* Navigation */,
 				C8C0C3052F8505D800AADEC8 /* StorageService */,
 				C8222E672E86935B00AC0F57 /* Products */,
@@ -105,6 +108,14 @@
 				C8C0C3042F8505D800AADEC8 /* StorageService.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		C8AB2BA62F9A637B00DA3732 /* Class */ = {
+			isa = PBXGroup;
+			children = (
+				C8AB2BA82F9A63CF00DA3732 /* UserClass.swift */,
+			);
+			path = Class;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,6 +244,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8AB2BA92F9A63CF00DA3732 /* UserClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
