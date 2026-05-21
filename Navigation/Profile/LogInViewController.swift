@@ -2,6 +2,7 @@ import UIKit
 
 class LogInViewController: UIViewController {
     
+
     lazy var profileView: ProfileTableHederView = {
         let view = ProfileTableHederView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -9,7 +10,9 @@ class LogInViewController: UIViewController {
     }()
     
     private var userService: UserService?
+    var loginDelegate: LoginViewControllerDelegate? // Делегат для проверки
     
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -19,34 +22,25 @@ class LogInViewController: UIViewController {
         setupButtonTarget()
         notification()
         
-//      Для отладки - выводим информацию о текущей схеме сборки
+        // Для отладки - выводим информацию о текущей схеме сборки
         #if DEBUG
         print("Приложение запущено в DEBUG режиме")
         print("Используется TestUserService")
+        // Автоматически заполняем поля для удобства тестирования
+        profileView.logInAccount.text = "test_user"
+        profileView.password.text = "test123"
         #else
         print("Приложение запущено в RELEASE режиме")
         print("Используется CurrentUserService")
         #endif
     }
     
+
     private func setupUserService() {
         #if DEBUG
-//      Для Debug сборки используем TestUserService
         userService = TestUserService()
-        
-//      Дополнительно: автоматически заполняем поле логина для удобства тестирования
-        profileView.logInAccount.text = "test_user"
-        
         #else
-//      Для Release сборки используем CurrentUserService с реальным пользователем
-        let realUser = User(
-            login: "admin",
-            fullName: "Hipster Cat",
-            avatar: UIImage(named: "Avatar") ?? UIImage(systemName: "person.circle.fill") ?? UIImage(),
-            status: "Waiting for something..."
-        )
-        userService = CurrentUserService(user: realUser)
-        
+        userService = CurrentUserService()
         #endif
     }
     
@@ -58,35 +52,48 @@ class LogInViewController: UIViewController {
         )
     }
     
+
     @objc private func loginButtonTapped() {
-//      Скрываем клавиатуру
+        // Скрываем клавиатуру
         view.endEditing(true)
         
-        guard let login = profileView.logInAccount.text, !login.isEmpty else {
-            showAlert(message: "Пожалуйста, введите логин")
+        guard let login = profileView.logInAccount.text, !login.isEmpty,
+              let password = profileView.password.text, !password.isEmpty else {
+            showAlert(message: "Пожалуйста, заполните все поля")
             return
         }
         
-//      Получаем пользователя через сервис
-        let user = userService?.getUser(byLogin: login)
-        
-        if let validUser = user {
-            #if DEBUG
-            print("DEBUG: Пользователь найден - \(validUser.fullName)")
-            #else
-            print("RELEASE: Пользователь найден - \(validUser.fullName)")
-            #endif
-            navigateToProfile(with: validUser)
-        } else {
-            #if DEBUG
-            print("DEBUG: Пользователь с логином '\(login)' не найден")
-            #else
-            print("RELEASE: Пользователь с логином '\(login)' не найден")
-            #endif
-            showAlert(message: "Некорректные данные. Пользователь с логином \"\(login)\" не найден.")
+        // Шаг 1: Проверяем логин и пароль через делегат (LoginInspector -> Checker)
+        guard let delegate = loginDelegate else {
+            print("Ошибка: loginDelegate не установлен")
+            showAlert(message: "Ошибка сервиса авторизации")
+            return
         }
+        
+        let isValidCredentials = delegate.check(login: login, password: password)
+        
+        if !isValidCredentials {
+            showAlert(message: "Неверный логин или пароль")
+            return
+        }
+        
+        // Шаг 2: Если логин и пароль верны, получаем данные пользователя через UserService
+        guard let user = userService?.getUser(byLogin: login) else {
+            showAlert(message: "Пользователь с таким логином не найден")
+            return
+        }
+        
+        // Шаг 3: Переходим к профилю
+        #if DEBUG
+        print("Успешный вход! Пользователь: \(user.fullName)")
+        #else
+        print("Успешный вход! Пользователь: \(user.fullName)")
+        #endif
+        
+        navigateToProfile(with: user)
     }
     
+
     private func navigateToProfile(with user: User) {
         let profileVC = ProfileViewController()
         profileVC.user = user
@@ -94,6 +101,7 @@ class LogInViewController: UIViewController {
         navigationController?.pushViewController(profileVC, animated: true)
     }
     
+
     private func showAlert(message: String) {
         let alert = UIAlertController(
             title: "Ошибка",
@@ -104,6 +112,7 @@ class LogInViewController: UIViewController {
         present(alert, animated: true)
     }
     
+
     func notification() {
         NotificationCenter.default.addObserver(
             self,
@@ -132,6 +141,7 @@ class LogInViewController: UIViewController {
         profileView.scrollView.scrollIndicatorInsets = .zero
     }
     
+
     func constraints() {
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
@@ -142,6 +152,7 @@ class LogInViewController: UIViewController {
         ])
     }
 }
+
 
 extension LogInViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

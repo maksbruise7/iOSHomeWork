@@ -1,31 +1,40 @@
 import UIKit
 
-//      Модель пользователя
+
 class User {
     let login: String
     let fullName: String
     let avatar: UIImage
     let status: String
+    let password: String // Добавляем пароль для проверки
     
-    init(login: String, fullName: String, avatar: UIImage, status: String) {
+    init(login: String, password: String, fullName: String, avatar: UIImage, status: String) {
         self.login = login
+        self.password = password
         self.fullName = fullName
         self.avatar = avatar
         self.status = status
     }
 }
 
-//      Протокол сервиса пользователей
+
 protocol UserService {
     func getUser(byLogin login: String) -> User?
 }
 
-//      Сервис текущего пользователя
+
 class CurrentUserService: UserService {
     private let user: User
     
-    init(user: User) {
-        self.user = user
+    init() {
+        // Реальный пользователь для Release сборки
+        self.user = User(
+            login: "admin",
+            password: "password123",
+            fullName: "Hipster Cat",
+            avatar: UIImage(named: "Avatar") ?? UIImage(systemName: "person.circle.fill") ?? UIImage(),
+            status: "Waiting for something..."
+        )
     }
     
     func getUser(byLogin login: String) -> User? {
@@ -36,13 +45,15 @@ class CurrentUserService: UserService {
     }
 }
 
+
 class TestUserService: UserService {
     private let testUser: User
     
     init() {
-//      Создаем тестового пользователя с явно тестовыми данными
+        // Тестовый пользователь для Debug сборки
         self.testUser = User(
             login: "test_user",
+            password: "test123",
             fullName: "Test User Debug",
             avatar: UIImage(systemName: "person.circle.fill") ?? UIImage(),
             status: "This is a DEBUG test account"

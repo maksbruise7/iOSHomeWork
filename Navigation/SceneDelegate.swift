@@ -4,7 +4,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-
     func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
@@ -18,21 +17,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let imageTwo = UIImage(named: "Horse")
         
         let tabbarController = UITabBarController()
-        let feedNavController =  UINavigationController()
+        let feedNavController = UINavigationController()
         let profileNavController = UINavigationController()
-        
         
         feedNavController.tabBarItem = UITabBarItem(title: "Feed", image: imageOne, tag: 0)
         profileNavController.tabBarItem = UITabBarItem(title: "Profile", image: imageTwo, tag: 1)
         
+//      Создаем LoginViewController
+        let loginVC = LogInViewController()
+        
+//      Используем фабрику для создания делегата
+        let factory = MyLoginFactory()
+        loginVC.loginDelegate = factory.makeLoginInspector()
+        
+//      Устанавливаем LoginViewController как корневой для profileNavController
+        profileNavController.viewControllers = [loginVC]
         feedNavController.viewControllers = [FeedViewController()]
-        profileNavController.viewControllers = [LogInViewController()]
         
         tabbarController.viewControllers = [profileNavController, feedNavController]
         
         window?.rootViewController = tabbarController
         window?.makeKeyAndVisible()
-
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -50,4 +55,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidEnterBackground(_ scene: UIScene) {
     }
 }
-
