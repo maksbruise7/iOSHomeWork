@@ -2,6 +2,8 @@ import UIKit
 
 class ProfileViewController: UIViewController {
     
+    var user: User?
+
     let contentTable = PostArray.make()
     
     enum ID: String {
@@ -34,8 +36,20 @@ class ProfileViewController: UIViewController {
         addSubviews()
         setupConstrains()
         tuneTableView()
+        setupProfileData()
     }
 
+    // Элементы UI 
+    private let profileHeaderView = ProfileHeaderView()
+    
+    private func setupProfileData() {
+        guard let user = user else { return }
+        profileHeaderView.fullNameLabel.text = user.fullName
+        profileHeaderView.statusLabel.text = user.status
+        profileHeaderView.avatarImageView.image = user.avatar
+    }
+    
+    
     func setupView() {
 #if DEBUG
     // Цвет для Debug (например, чтобы сразу видеть, что это тестовая сборка)
@@ -97,13 +111,12 @@ extension ProfileViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-            if section == 0 {
-                let headerView = ProfileHeaderView()
-                return headerView
-            } else {
-                return nil
-            }
+        if section == 0 {
+            return profileHeaderView
+        } else {
+            return nil
         }
+    }
 
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

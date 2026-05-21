@@ -50,7 +50,7 @@ class ProfileTableHederView: UIView{
         contentView.addSubview(imageVk)
         contentView.addSubview(stackView)
         contentView.addSubview(logInButton)
-        stackView.addArrangedSubview(logInAcccount)
+        stackView.addArrangedSubview(logInAccount)
         stackView.addArrangedSubview(password)
     }
     
@@ -79,7 +79,7 @@ class ProfileTableHederView: UIView{
     }()
     
     //Логин аккаунта
-    let logInAcccount: UITextField = {
+    let logInAccount: UITextField = {
         let login = UITextField()
         login.textColor = .black
         login.font = .systemFont(ofSize: 16)
