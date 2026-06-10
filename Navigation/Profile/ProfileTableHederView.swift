@@ -108,15 +108,17 @@ class ProfileTableHederView: UIView{
     }()
     
     //Кнопка логина
-    lazy var logInButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = UIColor(named: "Color")
-        button.layer.cornerRadius = 10
-        button.setTitle("Log in", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    lazy var logInButton: CustomButton = {
+            let button = CustomButton(
+                title: "Log in",
+                titleColor: .white,
+                backgroundColor: UIColor(named: "Color") ?? .systemBlue,
+                font: .systemFont(ofSize: 16, weight: .semibold),
+                cornerRadius: 10,
+                height: 50
+            )
+            return button
+        }()
     
     func setupContent() {
         NSLayoutConstraint.activate([
