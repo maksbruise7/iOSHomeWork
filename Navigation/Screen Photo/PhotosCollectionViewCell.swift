@@ -8,9 +8,9 @@ class PhotosCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
-    
     
     // MARK: - Lifecycle
     
@@ -19,18 +19,24 @@ class PhotosCollectionViewCell: UICollectionViewCell {
     }
     
     override init(frame: CGRect) {
-        super.init(frame: .zero)
+        super.init(frame: frame)
         
         setupView()
         setupSubviews()
         setupLayouts()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+    }
+    
     // MARK: - Private
     
     private func setupView() {
-        contentView.backgroundColor = .green
+        contentView.backgroundColor = .systemGray6
         contentView.clipsToBounds = true
+        contentView.layer.cornerRadius = 8
     }
     
     private func setupSubviews() {
@@ -39,13 +45,22 @@ class PhotosCollectionViewCell: UICollectionViewCell {
     
     private func setupLayouts() {
         NSLayoutConstraint.activate([
-            imageView.heightAnchor.constraint(equalToConstant: 120),
-            imageView.widthAnchor.constraint(equalToConstant: 120)
-               ])
+            // Растягиваем imageView на весь contentView
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        ])
     }
     
     // MARK: - Public
     
+    // Метод для установки UIImage (новый)
+    func setup(with image: UIImage) {
+        imageView.image = image
+    }
+    
+    // Метод для установки PhotoArray (оставляем для совместимости)
     func setup(_ profile: PhotoArray) {
         imageView.image = UIImage(named: profile.image)
     }
