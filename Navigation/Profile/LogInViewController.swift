@@ -30,13 +30,11 @@ class LogInViewController: UIViewController {
             #endif
         }
         
-        private func setupButtonTarget() {
-            profileView.logInButton.addTarget(
-                self,
-                action: #selector(loginButtonTapped),
-                for: .touchUpInside
-            )
+    private func setupButtonTarget() {
+        profileView.logInButton.setAction { [weak self] in
+            self?.loginButtonTapped()
         }
+    }
         
         // MARK: - Actions
         @objc private func loginButtonTapped() {
