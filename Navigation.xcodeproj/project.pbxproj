@@ -13,10 +13,11 @@
 		C80BBEC72FB4B81700DC0772 /* LoginFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80BBEC62FB4B81700DC0772 /* LoginFactory.swift */; };
 		C80BBEC92FB4B82C00DC0772 /* MyLoginFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80BBEC82FB4B82C00DC0772 /* MyLoginFactory.swift */; };
 		C850BCE42F8FA243002F84D0 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C850BCE32F8FA243002F84D0 /* SnapKit */; };
-		C850BCE92F8FA3AB002F84D0 /* iOSIntPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C850BCE82F8FA3AB002F84D0 /* iOSIntPackage */; };
+		C85C15852FBF43C300A4C48C /* DataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85C15842FBF43C300A4C48C /* DataProvider.swift */; };
 		C8AB2BA92F9A63CF00DA3732 /* UserClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AB2BA82F9A63CF00DA3732 /* UserClass.swift */; };
 		C8C0C30C2F8505D800AADEC8 /* StorageService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8C0C3042F8505D800AADEC8 /* StorageService.framework */; };
 		C8C0C30D2F8505D800AADEC8 /* StorageService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C8C0C3042F8505D800AADEC8 /* StorageService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C8F264BB2FBF5455006CEFCF /* iOSIntPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C8F264BA2FBF5455006CEFCF /* iOSIntPackage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,7 @@
 		C80BBEC62FB4B81700DC0772 /* LoginFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginFactory.swift; sourceTree = "<group>"; };
 		C80BBEC82FB4B82C00DC0772 /* MyLoginFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyLoginFactory.swift; sourceTree = "<group>"; };
 		C8222E662E86935B00AC0F57 /* Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Navigation.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C85C15842FBF43C300A4C48C /* DataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataProvider.swift; sourceTree = "<group>"; };
 		C8AB2BA82F9A63CF00DA3732 /* UserClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClass.swift; sourceTree = "<group>"; };
 		C8C0C3042F8505D800AADEC8 /* StorageService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StorageService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -85,7 +87,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C850BCE92F8FA3AB002F84D0 /* iOSIntPackage in Frameworks */,
+				C8F264BB2FBF5455006CEFCF /* iOSIntPackage in Frameworks */,
 				C8C0C30C2F8505D800AADEC8 /* StorageService.framework in Frameworks */,
 				C850BCE42F8FA243002F84D0 /* SnapKit in Frameworks */,
 			);
@@ -107,6 +109,7 @@
 				C80BBEBE2FB4B32A00DC0772 /* Checker.swift */,
 				C80BBEC12FB4B3A800DC0772 /* LoginViewControllerDelegate.swift */,
 				C80BBEC32FB4B3CE00DC0772 /* LoginInspector.swift */,
+				C85C15842FBF43C300A4C48C /* DataProvider.swift */,
 			);
 			path = Checker;
 			sourceTree = "<group>";
@@ -182,7 +185,7 @@
 			name = Navigation;
 			packageProductDependencies = (
 				C850BCE32F8FA243002F84D0 /* SnapKit */,
-				C850BCE82F8FA3AB002F84D0 /* iOSIntPackage */,
+				C8F264BA2FBF5455006CEFCF /* iOSIntPackage */,
 			);
 			productName = Navigation;
 			productReference = C8222E662E86935B00AC0F57 /* Navigation.app */;
@@ -240,7 +243,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C850BCE22F8FA243002F84D0 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				C850BCE72F8FA3AB002F84D0 /* XCRemoteSwiftPackageReference "iOSIntPackage" */,
+				C8F264B92FBF5455006CEFCF /* XCRemoteSwiftPackageReference "iOSIntPackage" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C8222E672E86935B00AC0F57 /* Products */;
@@ -280,6 +283,7 @@
 				C80BBEBF2FB4B32A00DC0772 /* Checker.swift in Sources */,
 				C80BBEC92FB4B82C00DC0772 /* MyLoginFactory.swift in Sources */,
 				C80BBEC22FB4B3A800DC0772 /* LoginViewControllerDelegate.swift in Sources */,
+				C85C15852FBF43C300A4C48C /* DataProvider.swift in Sources */,
 				C8AB2BA92F9A63CF00DA3732 /* UserClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -603,12 +607,12 @@
 				minimumVersion = 5.7.1;
 			};
 		};
-		C850BCE72F8FA3AB002F84D0 /* XCRemoteSwiftPackageReference "iOSIntPackage" */ = {
+		C8F264B92FBF5455006CEFCF /* XCRemoteSwiftPackageReference "iOSIntPackage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/TrueMax/iOSIntPackage";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.2.0;
+				branch = imagepublisher;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -619,9 +623,9 @@
 			package = C850BCE22F8FA243002F84D0 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
-		C850BCE82F8FA3AB002F84D0 /* iOSIntPackage */ = {
+		C8F264BA2FBF5455006CEFCF /* iOSIntPackage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C850BCE72F8FA3AB002F84D0 /* XCRemoteSwiftPackageReference "iOSIntPackage" */;
+			package = C8F264B92FBF5455006CEFCF /* XCRemoteSwiftPackageReference "iOSIntPackage" */;
 			productName = iOSIntPackage;
 		};
 /* End XCSwiftPackageProductDependency section */
