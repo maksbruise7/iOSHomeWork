@@ -126,8 +126,6 @@ class ProfileHeaderView: UIView {
                print("\(text)")
            }
        }
-    
-    
    }
 
 extension UITableView {

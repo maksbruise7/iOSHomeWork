@@ -9,82 +9,41 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
-        guard let scene = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        window = UIWindow(windowScene: scene)
+        window = UIWindow(windowScene: windowScene)
         
         let imageOne = UIImage(named: "Book")
         let imageTwo = UIImage(named: "Horse")
         
         let tabbarController = UITabBarController()
-        let feedNavController = UINavigationController()
-        let profileNavController = UINavigationController()
         
+        // MARK: - Feed Tab
+        let feedVC = FeedViewController()
+        let feedNavController = UINavigationController(rootViewController: feedVC)
         feedNavController.tabBarItem = UITabBarItem(title: "Feed", image: imageOne, tag: 0)
+        
+        // MARK: - Profile Tab (MVVM)
+        #if DEBUG
+        let users = DataProvider.getTestUsers()
+        let userService: UserService = TestUserService(users: users)
+        let userLogin = users.first?.login ?? "test_user"
+        #else
+        let users = DataProvider.getRealUsers()
+        let userService: UserService = CurrentUserService(users: users)
+        let userLogin = users.first?.login ?? "admin"
+        #endif
+        
+        let profileViewModel = ProfileViewModel(userService: userService, userLogin: userLogin)
+        let profileVC = ProfileViewController()
+        profileVC.viewModel = profileViewModel
+        
+        let profileNavController = UINavigationController(rootViewController: profileVC)
         profileNavController.tabBarItem = UITabBarItem(title: "Profile", image: imageTwo, tag: 1)
         
-//      Настройка зависимостей
-        
-        #if DEBUG
-        // Для DEBUG режима
-        let testUsers = DataProvider.getTestUsers()
-        let userService: UserService = TestUserService(users: testUsers)
-        
-//      Настраиваем Checker для первого тестового пользователя
-        let testCredentials = DataProvider.getCheckerCredentials()
-        Checker.shared.setup(login: testCredentials.login, password: testCredentials.password)
-        
-        print("📍 DEBUG режим: Загружено \(testUsers.count) тестовых пользователей")
-        #else
-        // Для RELEASE режима
-        let realUsers = DataProvider.getRealUsers()
-        let userService: UserService = CurrentUserService(users: realUsers)
-        
-        // Настраиваем Checker для первого реального пользователя
-        let realCredentials = DataProvider.getCheckerCredentials()
-        Checker.shared.setup(login: realCredentials.login, password: realCredentials.password)
-        
-        print("📍 RELEASE режим: Загружено \(realUsers.count) реальных пользователей")
-        #endif
-        
-//      Создаем LoginViewController и внедряем зависимости
-        let loginVC = LogInViewController()
-        loginVC.userService = userService // Внедряем сервис пользователей
-        
-//      Используем фабрику для создания делегата
-        let factory = MyLoginFactory()
-        loginVC.loginDelegate = factory.makeLoginInspector()
-        
-        // Для DEBUG автоматически заполняем поля
-        #if DEBUG
-        if let firstUser = testUsers.first {
-            loginVC.profileView.logInAccount.text = firstUser.login
-            loginVC.profileView.password.text = firstUser.password
-        }
-        #endif
-        
-        // Устанавливаем LoginViewController как корневой для profileNavController
-        profileNavController.viewControllers = [loginVC]
-        feedNavController.viewControllers = [FeedViewController()]
-        
-        tabbarController.viewControllers = [profileNavController, feedNavController]
+        tabbarController.viewControllers = [feedNavController, profileNavController]
         
         window?.rootViewController = tabbarController
         window?.makeKeyAndVisible()
-    }
-
-    func sceneDidDisconnect(_ scene: UIScene) {
-    }
-
-    func sceneDidBecomeActive(_ scene: UIScene) {
-    }
-
-    func sceneWillResignActive(_ scene: UIScene) {
-    }
-
-    func sceneWillEnterForeground(_ scene: UIScene) {
-    }
-
-    func sceneDidEnterBackground(_ scene: UIScene) {
     }
 }
