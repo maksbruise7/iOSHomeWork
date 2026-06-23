@@ -4,7 +4,9 @@ import Combine
 class PhotosViewController: UIViewController {
     
     // MARK: - Properties
-    private var displayedPhotos: [UIImage] = [] // Храним UIImage напрямую
+    weak var coordinator: ProfileCoordinator?  // Добавляем это свойство
+    
+    private var displayedPhotos: [UIImage] = []
     private var cancellable: AnyCancellable?
     private let imagePublisherFacade = ImagePublisherFacade()
     
@@ -21,22 +23,17 @@ class PhotosViewController: UIViewController {
         collectionView.backgroundColor = .white
         collectionView.register(
             PhotosCollectionViewCell.self,
-            forCellWithReuseIdentifier: ID.collectionView.rawValue
+            forCellWithReuseIdentifier: "PhotoCell"
         )
         
         return collectionView
     }()
     
-    enum ID: String {
-        case collectionView = "CollectionView"
-    }
-    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "Photo Gallery"
-        setupSubview()
-        setupConstraints()
+        setupViews()
         setupImageSubscription()
         startImagePublishing()
     }
@@ -47,38 +44,25 @@ class PhotosViewController: UIViewController {
     }
     
     // MARK: - Setup
-    func setupSubview() {
+    private func setupViews() {
+        view.backgroundColor = .white
         view.addSubview(collectionView)
         collectionView.dataSource = self
-        collectionView.delegate = self
+        
+        collectionView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
     
-    func setupConstraints() {
-        let safeAreaGuide = view.safeAreaLayoutGuide
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: safeAreaGuide.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: safeAreaGuide.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: safeAreaGuide.trailingAnchor)
-        ])
-    }
-    
-    // MARK: - Image Publisher Setup
     private func setupImageSubscription() {
-        // Подписываемся на получение изображений от паблишера
         cancellable = imagePublisherFacade.imagePublisher
-            .receive(on: DispatchQueue.main) // Переключаем на главный поток для UI
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] image in
-                guard let self = self else { return }
-                self.addImageToCollection(image)
+                self?.addImageToCollection(image)
             }
     }
     
     private func startImagePublishing() {
-        // Запускаем публикацию изображений:
-        // - задержка 0.5 секунды
-        // - 20 повторений (больше 10, заполняем всю коллекцию)
-        print("🚀 Запуск публикации 20 изображений с задержкой 0.5 сек")
         imagePublisherFacade.addImagesWithTimer(delay: 0.5, repeatCount: 20)
     }
     
@@ -92,7 +76,6 @@ class PhotosViewController: UIViewController {
         
         print("📸 Добавлено фото #\(displayedPhotos.count)")
         
-        // Прокручиваем к последнему добавленному фото
         if displayedPhotos.count > 0 {
             collectionView.scrollToItem(
                 at: indexPath,
@@ -104,7 +87,6 @@ class PhotosViewController: UIViewController {
     
     private func cancelSubscription() {
         cancellable?.cancel()
-        cancellable = nil
         print("🔴 Подписка на ImagePublisher отменена")
     }
 }
@@ -116,27 +98,9 @@ extension PhotosViewController: UICollectionViewDataSource {
         return displayedPhotos.count
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ID.collectionView.rawValue,
-            for: indexPath
-        ) as! PhotosCollectionViewCell
-        
-        // Используем новый метод setup(with:)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotosCollectionViewCell
         cell.setup(with: displayedPhotos[indexPath.row])
-        
         return cell
-    }
-}
-
-// MARK: - UICollectionViewDelegate
-extension PhotosViewController: UICollectionViewDelegate {
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Выбрано фото #\(indexPath.row + 1)")
-        // Здесь можно добавить переход на детальный экран
     }
 }
