@@ -11,10 +11,11 @@ class PostTableViewCell: UITableViewCell {
         return label
     }()
     
-    let image: UIImageView = {
+    let postImageView: UIImageView = {
         let image = UIImageView()
-        image.contentMode = .scaleAspectFit
+        image.contentMode = .scaleAspectFill
         image.backgroundColor = .black
+        image.clipsToBounds = true
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
@@ -45,59 +46,106 @@ class PostTableViewCell: UITableViewCell {
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: .value1, reuseIdentifier: reuseIdentifier)
+        super.init(style: .default, reuseIdentifier: reuseIdentifier)
         setupView()
-        constaints()
-        }
-
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
+        setupConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        author.text = nil
+        descrip.text = nil
+        likes.text = nil
+        views.text = nil
+        postImageView.image = nil
+    }
     
     func setupView() {
         contentView.addSubview(author)
-        contentView.addSubview(image)
+        contentView.addSubview(postImageView)
         contentView.addSubview(descrip)
         contentView.addSubview(likes)
         contentView.addSubview(views)
     }
     
-    func constaints() {
+    func setupConstraints() {
         NSLayoutConstraint.activate([
+            // Автор
             author.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             author.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            author.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            image.topAnchor.constraint(equalTo: author.bottomAnchor, constant: 12),
-            image.heightAnchor.constraint(equalToConstant: 400),
-            image.widthAnchor.constraint(equalToConstant: 410),
+            // Изображение
+            postImageView.topAnchor.constraint(equalTo: author.bottomAnchor, constant: 12),
+            postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            postImageView.heightAnchor.constraint(equalTo: postImageView.widthAnchor),
             
-            descrip.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 16),
+            // Описание
+            descrip.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 16),
             descrip.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            descrip.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
+            // Лайки
             likes.topAnchor.constraint(equalTo: descrip.bottomAnchor, constant: 16),
             likes.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            likes.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             
+            // Просмотры
             views.topAnchor.constraint(equalTo: descrip.bottomAnchor, constant: 16),
-            views.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+            views.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            views.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
     
-    func configurat(_ model: PostArray) {
-        author.text = model.author
-        descrip.text = model.descrip
-        likes.text = "Likes: \(String(model.likes))"
-        views.text = "Views: \(String(model.views))"
+    // Метод для конфигурации с вашей моделью PostArray
+    func configure(with post: PostArray) {
+        author.text = post.author
+        descrip.text = post.descrip
+        likes.text = "❤️ \(post.likes)"
+        views.text = "👁️ \(post.views)"
         
-        // 1. Получаем исходное изображение
-        guard let sourceImage = UIImage(named: model.image) else { return }
-        
-        // 2. Создаем экземпляр процессора
+        // Загружаем изображение
+        if let sourceImage = UIImage(named: post.image) {
+            applyFilter(to: sourceImage)
+        } else {
+            // Если изображения нет, создаем заглушку
+            postImageView.image = generatePlaceholder(text: post.author)
+        }
+    }
+    
+    // Применение фильтра к изображению
+    private func applyFilter(to image: UIImage) {
         let processor = ImageProcessor()
-
-        // 3. Вызываем метод фильтрации
-        processor.processImage(sourceImage: sourceImage, filter: .colorInvert) { [weak self] processedImage in
-            // 4. Устанавливаем обработанное изображение
-            self?.image.image = processedImage
+        
+        processor.processImage(sourceImage: image, filter: .colorInvert) { [weak self] processedImage in
+            DispatchQueue.main.async {
+                self?.postImageView.image = processedImage ?? image
+            }
+        }
+    }
+    
+    // Генерация изображения-заглушки
+    private func generatePlaceholder(text: String) -> UIImage {
+        let size = CGSize(width: 400, height: 400)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { ctx in
+            UIColor.systemGray5.setFill()
+            ctx.fill(CGRect(origin: .zero, size: size))
+            
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 24),
+                .foregroundColor: UIColor.darkGray
+            ]
+            let textString = text as NSString
+            let textSize = textString.size(withAttributes: attributes)
+            textString.draw(at: CGPoint(x: (size.width - textSize.width) / 2,
+                                        y: (size.height - textSize.height) / 2),
+                           withAttributes: attributes)
         }
     }
 }

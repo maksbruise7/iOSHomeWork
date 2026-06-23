@@ -1,144 +1,192 @@
 import UIKit
+import Combine
+import SnapKit
 
 class ProfileViewController: UIViewController {
     
-    var user: User?
-
-    let contentTable = PostArray.make()
+    // MARK: - Properties
+    var viewModel: ProfileViewModel!
+    private var cancellables = Set<AnyCancellable>()
     
-    enum ID: String {
-        case postTableViewCell = "PostTableViewCell"
-        case photosTableViewCell = "PhotosTableViewCell"//
-    }
+    private let profileHeaderView = ProfileHeaderView()
+    private let contentTable = PostArray.make()
     
-    private lazy var tableView:  UITableView = {
-        let tableView = UITableView.init(
-            frame: .zero,
-            style: .plain
-        )
+    private let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.hidesWhenStopped = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .grouped)
+        tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "PostCell")
+        tableView.register(PhotosTableViewCell.self, forCellReuseIdentifier: "PhotosCell")
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 500
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-
+    
+    // MARK: - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupViews()
+        setupBindings()
+        setupActions()
+        viewModel.loadUser()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupView()
-        addSubviews()
-        setupConstrains()
-        tuneTableView()
-        setupProfileData()
+    // MARK: - Setup
+    private func setupViews() {
+        view.backgroundColor = .white
+        
+        view.addSubview(tableView)
+        view.addSubview(activityIndicator)
+        
+        tableView.tableHeaderView = profileHeaderView
+        profileHeaderView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 250)
+        
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
-
-    // Элементы UI 
-    private let profileHeaderView = ProfileHeaderView()
     
-    private func setupProfileData() {
-        guard let user = user else { return }
+    private func setupBindings() {
+        // Подписываемся на изменения пользователя
+        viewModel.$user
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] user in
+                guard let user = user else { return }
+                self?.updateUI(with: user)
+            }
+            .store(in: &cancellables)
+        
+        // Подписываемся на состояние загрузки
+        viewModel.$isLoading
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
+                if isLoading {
+                    self?.activityIndicator.startAnimating()
+                } else {
+                    self?.activityIndicator.stopAnimating()
+                }
+            }
+            .store(in: &cancellables)
+        
+        // Подписываемся на ошибки
+        viewModel.$errorMessage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                if let error = error {
+                    self?.showAlert(message: error)
+                }
+            }
+            .store(in: &cancellables)
+        
+        // Подписываемся на изменение статуса
+        viewModel.$statusText
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                self?.profileHeaderView.statusLabel.text = status
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func setupActions() {
+        profileHeaderView.setStatusButton.setAction { [weak self] in
+            self?.updateStatus()
+        }
+    }
+    
+    private func updateUI(with user: User) {
         profileHeaderView.fullNameLabel.text = user.fullName
         profileHeaderView.statusLabel.text = user.status
         profileHeaderView.avatarImageView.image = user.avatar
+        tableView.reloadData()
     }
     
-    
-    func setupView() {
-#if DEBUG
-    // Цвет для Debug (например, чтобы сразу видеть, что это тестовая сборка)
-    view.backgroundColor = .systemYellow
-    #else
-    // Цвет для Release
-    view.backgroundColor = .systemBackground
-    #endif
-//        view.backgroundColor = .white
-        navigationController?.navigationBar.prefersLargeTitles = false
-    }
-    
-    func addSubviews() {
-        view.addSubview(tableView)
-    }
-    
-    func setupConstrains() {
-        let safeAreaGuide = view.safeAreaLayoutGuide
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: safeAreaGuide.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: safeAreaGuide.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: safeAreaGuide.bottomAnchor),
-        ])
-    }
-    
-    func tuneTableView() {
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.register(PostTableViewCell.self, forCellReuseIdentifier: ID.postTableViewCell.rawValue)
-        tableView.register(PhotosTableViewCell.self, forCellReuseIdentifier: ID.photosTableViewCell.rawValue)
+    private func updateStatus() {
+        guard let newStatus = profileHeaderView.statusTextField.text,
+              !newStatus.isEmpty else {
+            showAlert(message: "Введите статус")
+            return
+        }
         
-        tableView.dataSource = self
-        tableView.delegate = self
+        viewModel.updateStatus(newStatus)
+        profileHeaderView.statusTextField.text = ""
+        view.endEditing(true)
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(
+            title: "Ошибка",
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 
+// MARK: - UITableViewDataSource
 extension ProfileViewController: UITableViewDataSource {
+    
     func numberOfSections(in tableView: UITableView) -> Int {
-        2
+        return 2
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return 1
         } else {
-            return contentTable.count
+            return contentTable.count  // contentTable это [PostArray]
         }
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: ID.photosTableViewCell.rawValue, for: indexPath) 
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PhotosCell", for: indexPath) as! PhotosTableViewCell
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: ID.postTableViewCell.rawValue, for: indexPath) as! PostTableViewCell
-            cell.configurat(contentTable[indexPath.row])
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostTableViewCell
+            cell.configure(with: contentTable[indexPath.row])  // Передаем PostArray
             return cell
-            }
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if section == 0 {
-            return profileHeaderView
-        } else {
-            return nil
         }
-    }
-
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return 125
-        } else {
-            return 550
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 {
-            return 250
-        } else {
-            return 0
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let detailVC = PhotosViewController()
-        navigationController?.pushViewController(detailVC, animated: true)
     }
 }
 
-extension ProfileViewController: UITableViewDelegate {}
+// MARK: - UITableViewDelegate
+extension ProfileViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return 150
+        }
+        return UITableView.automaticDimension
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 0 {
+            let photosVC = PhotosViewController()
+            navigationController?.pushViewController(photosVC, animated: true)
+        }
+    }
+}
