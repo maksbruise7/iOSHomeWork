@@ -4,6 +4,7 @@ import StorageService
 class FeedViewController: UIViewController {
     
     // MARK: - Properties
+    weak var coordinator: FeedCoordinator?  // Добавляем координатор
     private var feedModel: FeedModel!
     
     // MARK: - UI Components
@@ -44,7 +45,6 @@ class FeedViewController: UIViewController {
         return label
     }()
     
-    // Существующая кнопка Post (заменяем на CustomButton)
     private let postButton: CustomButton = {
         let button = CustomButton(
             title: "Перейти к посту",
@@ -80,20 +80,15 @@ class FeedViewController: UIViewController {
     }
     
     private func setupModel() {
-        // Загаданное слово (можете изменить на любое другое)
         feedModel = FeedModel(secretWord: "swift")
-        
-        // Для отладки (можно убрать перед релизом)
         print("🎮 Загаданное слово: \(feedModel.getSecretWord())")
     }
     
     private func setupActions() {
-        // Обработчик для кнопки проверки слова
         checkGuessButton.setAction { [weak self] in
             self?.checkGuess()
         }
         
-        // Обработчик для кнопки перехода к посту
         postButton.setAction { [weak self] in
             self?.showPost()
         }
@@ -105,23 +100,19 @@ class FeedViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Поле ввода
             textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             textField.heightAnchor.constraint(equalToConstant: 44),
             
-            // Кнопка проверки слова
             checkGuessButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20),
             checkGuessButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             checkGuessButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            // Лейбл с результатом
             resultLabel.topAnchor.constraint(equalTo: checkGuessButton.bottomAnchor, constant: 30),
             resultLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             resultLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            // Кнопка перехода к посту
             postButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
             postButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             postButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
@@ -130,23 +121,15 @@ class FeedViewController: UIViewController {
     
     // MARK: - Game Logic
     private func checkGuess() {
-        // Скрываем клавиатуру
         view.endEditing(true)
         
-        // Проверяем, что текст не пустой
         guard let guessedText = textField.text, !guessedText.isEmpty else {
             showEmptyFieldWarning()
             return
         }
         
-        // Проверяем слово через модель
         let isCorrect = feedModel.check(word: guessedText)
-        
-        // Обновляем UI с результатом
         updateResultLabel(isCorrect: isCorrect, guessedWord: guessedText)
-        
-        // Очищаем поле для следующей попытки (опционально)
-        // textField.text = ""
     }
     
     private func showEmptyFieldWarning() {
@@ -167,11 +150,12 @@ class FeedViewController: UIViewController {
         }
     }
     
-    // MARK: - Navigation
+    // MARK: - Navigation (ИСПРАВЛЕНО с использованием координатора)
     @objc private func showPost() {
+        // Создаем пост для передачи
         let post = Post(title: "New Post")
-        let postVC = PostViewController(post: post)
-        navigationController?.pushViewController(postVC, animated: true)
+        // Используем координатор для навигации
+        coordinator?.showPostViewController(with: post)
     }
     
     // MARK: - Animations
