@@ -51,23 +51,18 @@ class ProfileHeaderView: UIView {
     }()
     
     // Кнопка для отправления статуса
-    lazy var setStatusButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Show status", for: .normal)
-        button.backgroundColor = .blue
-        button.layer.cornerRadius = 4
-        button.setTitleColor(.white, for: .normal)
-        button.layer.masksToBounds = false
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOffset = CGSize(width: 4, height: 4)
-        button.layer.shadowRadius = 10
-        button.layer.shadowOpacity = 0.7
-        button.addTarget(
-            self,
-            action: #selector(tapped),
-            for: .touchUpInside
+    lazy var setStatusButton: CustomButton = {
+        let button = CustomButton(
+            title: "Set Status",
+            titleColor: .white,
+            backgroundColor: .systemBlue,
+            font: .systemFont(ofSize: 14, weight: .medium),
+            cornerRadius: 8,
+            height: 40,
+            action: { [weak self] in
+                self?.tapped()
+            }
         )
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -124,34 +119,6 @@ class ProfileHeaderView: UIView {
             make.width.equalTo(370)
         }
     }
-//    func setupConstraints() {
-//        NSLayoutConstraint.activate([
-//            avatarImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
-//            avatarImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-//            avatarImageView.widthAnchor.constraint(equalToConstant: 150),
-//            avatarImageView.heightAnchor.constraint(equalToConstant: 150),
-//            
-//            fullNameLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
-//            fullNameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
-//            fullNameLabel.widthAnchor.constraint(equalToConstant: 100),
-//            fullNameLabel.heightAnchor.constraint(equalToConstant: 20),
-//            
-//            statusLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 95),
-//            statusLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
-//            statusLabel.widthAnchor.constraint(equalToConstant: 180),
-//            statusLabel.heightAnchor.constraint(equalToConstant: 25),
-//            
-//            statusTextField.topAnchor.constraint(equalTo: self.topAnchor, constant: 125),
-//            statusTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 185),
-//            statusTextField.widthAnchor.constraint(equalToConstant: 180),
-//            statusTextField.heightAnchor.constraint(equalToConstant: 25),
-//            
-//            setStatusButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 182),
-//            setStatusButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-//            setStatusButton.heightAnchor.constraint(equalToConstant: 50),
-//            setStatusButton.widthAnchor.constraint(equalToConstant: 370)
-//        ])
-//    }
     
     @objc func tapped() {
            if let text = statusTextField.text {
@@ -159,8 +126,6 @@ class ProfileHeaderView: UIView {
                print("\(text)")
            }
        }
-    
-    
    }
 
 extension UITableView {

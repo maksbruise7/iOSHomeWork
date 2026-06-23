@@ -1,58 +1,59 @@
 import UIKit
 
-//      Модель пользователя
+// MARK: - User Model
 class User {
     let login: String
     let fullName: String
     let avatar: UIImage
     let status: String
+    let password: String
     
-    init(login: String, fullName: String, avatar: UIImage, status: String) {
+    init(login: String, password: String, fullName: String, avatar: UIImage, status: String) {
         self.login = login
+        self.password = password
         self.fullName = fullName
         self.avatar = avatar
         self.status = status
     }
 }
 
-//      Протокол сервиса пользователей
+// MARK: - User Service Protocol
 protocol UserService {
     func getUser(byLogin login: String) -> User?
 }
 
-//      Сервис текущего пользователя
+// MARK: - Current User Service (Release)
 class CurrentUserService: UserService {
-    private let user: User
+    private let users: [String: User]
     
-    init(user: User) {
-        self.user = user
+//      Данные передаются через инициализатор
+    init(users: [User]) {
+        var usersDict = [String: User]()
+        for user in users {
+            usersDict[user.login] = user
+        }
+        self.users = usersDict
     }
     
     func getUser(byLogin login: String) -> User? {
-        if login == user.login {
-            return user
-        }
-        return nil
+        return users[login]
     }
 }
 
+// MARK: - Test User Service (Debug)
 class TestUserService: UserService {
-    private let testUser: User
+    private let users: [String: User]
     
-    init() {
-//      Создаем тестового пользователя с явно тестовыми данными
-        self.testUser = User(
-            login: "test_user",
-            fullName: "Test User Debug",
-            avatar: UIImage(systemName: "person.circle.fill") ?? UIImage(),
-            status: "This is a DEBUG test account"
-        )
+//      Данные передаются через инициализатор
+    init(users: [User]) {
+        var usersDict = [String: User]()
+        for user in users {
+            usersDict[user.login] = user
+        }
+        self.users = usersDict
     }
     
     func getUser(byLogin login: String) -> User? {
-        if login == testUser.login {
-            return testUser
-        }
-        return nil
+        return users[login]
     }
 }
