@@ -1,7 +1,7 @@
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    
+
     var window: UIWindow?
     var appCoordinator: AppCoordinator?
     
@@ -15,11 +15,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         let navigationController = UINavigationController()
         
+        // Создаем AppCoordinator
         appCoordinator = AppCoordinator(navigationController: navigationController)
         appCoordinator?.start()
         
         window.rootViewController = navigationController
         self.window = window
         window.makeKeyAndVisible()
+        
+        print("✅ SceneDelegate настроен, AppCoordinator запущен")
     }
 }
