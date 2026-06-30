@@ -4,7 +4,7 @@ import StorageService
 class FeedViewController: UIViewController {
     
     // MARK: - Properties
-    weak var coordinator: FeedCoordinator?  // Добавляем координатор
+    weak var coordinator: FeedCoordinator?
     private var feedModel: FeedModel!
     
     // MARK: - UI Components
@@ -57,6 +57,19 @@ class FeedViewController: UIViewController {
         return button
     }()
     
+    // Новая кнопка для сетевого запроса
+    private let networkRequestButton: CustomButton = {
+        let button = CustomButton(
+            title: "Выполнить сетевой запрос",
+            titleColor: .white,
+            backgroundColor: .systemPurple,
+            font: .systemFont(ofSize: 16, weight: .semibold),
+            cornerRadius: 10,
+            height: 44
+        )
+        return button
+    }()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +88,7 @@ class FeedViewController: UIViewController {
         view.addSubview(checkGuessButton)
         view.addSubview(resultLabel)
         view.addSubview(postButton)
+        view.addSubview(networkRequestButton)
         
         setupConstraints()
     }
@@ -90,7 +104,12 @@ class FeedViewController: UIViewController {
         }
         
         postButton.setAction { [weak self] in
-            self?.showPost()
+            let post = Post(title: "New Post")
+            self?.coordinator?.showPostViewController(with: post)
+        }
+        
+        networkRequestButton.setAction { [weak self] in
+            self?.performNetworkRequest()
         }
     }
     
@@ -113,9 +132,13 @@ class FeedViewController: UIViewController {
             resultLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             resultLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            postButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
+            postButton.topAnchor.constraint(equalTo: resultLabel.bottomAnchor, constant: 30),
             postButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            postButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            postButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            networkRequestButton.topAnchor.constraint(equalTo: postButton.bottomAnchor, constant: 16),
+            networkRequestButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            networkRequestButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
     }
     
@@ -150,12 +173,19 @@ class FeedViewController: UIViewController {
         }
     }
     
-    // MARK: - Navigation (ИСПРАВЛЕНО с использованием координатора)
-    @objc private func showPost() {
-        // Создаем пост для передачи
-        let post = Post(title: "New Post")
-        // Используем координатор для навигации
-        coordinator?.showPostViewController(with: post)
+    // MARK: - Network Request
+    private func performNetworkRequest() {
+        // Создаем случайную конфигурацию
+        let config = AppConfiguration.random()
+        
+        resultLabel.text = "🔄 Выполняется запрос к \(config.description)..."
+        resultLabel.textColor = .systemBlue
+        
+        // Выполняем сетевой запрос
+        NetworkService.request(for: config)
+        
+        resultLabel.text = "✅ Запрос выполнен! Смотрите консоль."
+        resultLabel.textColor = .systemGreen
     }
     
     // MARK: - Animations

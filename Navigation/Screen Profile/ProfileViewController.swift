@@ -37,13 +37,13 @@ class ProfileViewController: UIViewController {
         setupViews()
         setupBindings()
         setupActions()
-        setupNavigationBar()  // Добавляем настройку навигационной панели
+        setupNavigationBar()
         viewModel.loadUser()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: animated) // Показываем навбар
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -70,12 +70,11 @@ class ProfileViewController: UIViewController {
         }
     }
     
-    // Добавляем настройку навигационной панели
+    // Обновленная настройка навигационной панели
     private func setupNavigationBar() {
-        // Настройка заголовка
         navigationItem.title = "Profile"
         
-        // Создаем кнопку "Выйти"
+        // Кнопка "Выйти" слева
         let logoutButton = UIBarButtonItem(
             title: "Выйти",
             style: .plain,
@@ -83,17 +82,24 @@ class ProfileViewController: UIViewController {
             action: #selector(logoutTapped)
         )
         logoutButton.tintColor = .systemRed
+        navigationItem.leftBarButtonItem = logoutButton
         
-        // Добавляем кнопку справа
-        navigationItem.rightBarButtonItem = logoutButton
+        // Кнопка "Info" справа (НОВАЯ)
+        let infoButton = UIBarButtonItem(
+            title: "Info",
+            style: .plain,
+            target: self,
+            action: #selector(showInfoViewController)
+        )
+        infoButton.tintColor = .systemBlue
+        navigationItem.rightBarButtonItem = infoButton
         
-        // Настройка цвета навигационной панели
         navigationController?.navigationBar.tintColor = .systemBlue
         navigationController?.navigationBar.prefersLargeTitles = false
     }
     
+    // MARK: - Actions
     @objc private func logoutTapped() {
-        // Показываем алерт подтверждения
         let alert = UIAlertController(
             title: "Выход",
             message: "Вы уверены, что хотите выйти из аккаунта?",
@@ -106,6 +112,11 @@ class ProfileViewController: UIViewController {
         })
         
         present(alert, animated: true)
+    }
+    
+    @objc private func showInfoViewController() {
+        // Используем координатор для перехода
+        coordinator?.showInfoViewController()
     }
     
     private func setupBindings() {

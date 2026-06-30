@@ -6,10 +6,12 @@ class ProfileCoordinator: Coordinator {
     
     init() {
         self.navigationController = UINavigationController()
+        print("🏗️ ProfileCoordinator инициализирован")
     }
     
     func start() {
-        // Создаем и настраиваем ViewModel для Profile
+        print("▶️ ProfileCoordinator.start() вызван")
+        
         #if DEBUG
         let users = DataProvider.getTestUsers()
         let userService: UserService = TestUserService(users: users)
@@ -26,34 +28,48 @@ class ProfileCoordinator: Coordinator {
         profileVC.coordinator = self
         
         navigationController.setViewControllers([profileVC], animated: false)
+        print("✅ ProfileViewController установлен в ProfileCoordinator")
     }
     
     func showLoginViewController() {
+        print("📤 ProfileCoordinator.showLoginViewController вызван")
         let loginCoordinator = LoginCoordinator()
         loginCoordinator.parentCoordinator = self
         childCoordinators.append(loginCoordinator)
         loginCoordinator.start()
         
-        // Используем созданный loginCoordinator для презентации
         navigationController.topViewController?.present(loginCoordinator.navigationController, animated: true)
+        print("✅ LoginCoordinator показан")
     }
     
     func showPhotosViewController() {
+        print("📤 ProfileCoordinator.showPhotosViewController вызван")
         let photosVC = PhotosViewController()
         photosVC.coordinator = self
         navigationController.pushViewController(photosVC, animated: true)
+        print("✅ PhotosViewController показан")
+    }
+    
+    // НОВЫЙ МЕТОД для показа InfoViewController
+    func showInfoViewController() {
+        print("📤 ProfileCoordinator.showInfoViewController вызван")
+        let infoVC = InfoViewController()
+        infoVC.modalPresentationStyle = .formSheet
+        infoVC.modalTransitionStyle = .coverVertical
+        navigationController.topViewController?.present(infoVC, animated: true)
+        print("✅ InfoViewController показан")
     }
     
     func dismissLogin() {
         if let loginCoordinator = childCoordinators.first(where: { $0 is LoginCoordinator }) {
-            // Закрываем LoginCoordinator
             loginCoordinator.navigationController.dismiss(animated: true)
             childCoordinators.removeAll { $0 is LoginCoordinator }
+            print("✅ LoginCoordinator удален")
         }
     }
     
     func logout() {
-        // Показываем Login экран при выходе
+        print("📤 ProfileCoordinator.logout вызван")
         showLoginViewController()
     }
 }
