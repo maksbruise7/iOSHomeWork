@@ -3,6 +3,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    var appConfiguration: AppConfiguration?
     
     func scene(
         _ scene: UIScene,
@@ -11,39 +12,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        window = UIWindow(windowScene: windowScene)
+        // 🔑 Рандомно инициализируем конфигурацию
+        appConfiguration = AppConfiguration.random()
         
-        let imageOne = UIImage(named: "Book")
-        let imageTwo = UIImage(named: "Horse")
+        print("🏗️ Приложение запущено с конфигурацией: \(appConfiguration?.description ?? "неизвестно")")
+        print("🔗 URL: \(appConfiguration?.urlString ?? "неизвестно")")
         
-        let tabbarController = UITabBarController()
+        // Вызываем сетевой запрос
+        if let config = appConfiguration {
+            NetworkService.request(for: config)
+        }
         
-        // MARK: - Feed Tab
-        let feedVC = FeedViewController()
-        let feedNavController = UINavigationController(rootViewController: feedVC)
-        feedNavController.tabBarItem = UITabBarItem(title: "Feed", image: imageOne, tag: 0)
+        let window = UIWindow(windowScene: windowScene)
+        let navigationController = UINavigationController()
         
-        // MARK: - Profile Tab (MVVM)
-        #if DEBUG
-        let users = DataProvider.getTestUsers()
-        let userService: UserService = TestUserService(users: users)
-        let userLogin = users.first?.login ?? "test_user"
-        #else
-        let users = DataProvider.getRealUsers()
-        let userService: UserService = CurrentUserService(users: users)
-        let userLogin = users.first?.login ?? "admin"
-        #endif
+        // Создаем и запускаем AppCoordinator
+        let appCoordinator = AppCoordinator(navigationController: navigationController)
+        appCoordinator.start()
         
-        let profileViewModel = ProfileViewModel(userService: userService, userLogin: userLogin)
-        let profileVC = ProfileViewController()
-        profileVC.viewModel = profileViewModel
-        
-        let profileNavController = UINavigationController(rootViewController: profileVC)
-        profileNavController.tabBarItem = UITabBarItem(title: "Profile", image: imageTwo, tag: 1)
-        
-        tabbarController.viewControllers = [feedNavController, profileNavController]
-        
-        window?.rootViewController = tabbarController
-        window?.makeKeyAndVisible()
+        window.rootViewController = navigationController
+        self.window = window
+        window.makeKeyAndVisible()
     }
 }

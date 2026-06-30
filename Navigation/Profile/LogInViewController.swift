@@ -3,6 +3,8 @@ import UIKit
 class LogInViewController: UIViewController {
     
     // MARK: - Properties
+    weak var coordinator: LoginCoordinator?  // Добавляем координатор
+    
     lazy var profileView: ProfileTableHederView = {
         let view = ProfileTableHederView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -76,27 +78,9 @@ class LogInViewController: UIViewController {
         }
         
         print("✅ Успешный вход! Пользователь: \(user.fullName)")
-        navigateToProfile(with: user)
-    }
-    
-    // ИСПРАВЛЕННЫЙ МЕТОД НАВИГАЦИИ
-    private func navigateToProfile(with user: User) {
-        let profileVC = ProfileViewController()
         
-        // Создаем ViewModel с сервисом и логином пользователя
-        #if DEBUG
-        let users = DataProvider.getTestUsers()
-        let userService: UserService = TestUserService(users: users)
-        #else
-        let users = DataProvider.getRealUsers()
-        let userService: UserService = CurrentUserService(users: users)
-        #endif
-        
-        let viewModel = ProfileViewModel(userService: userService, userLogin: user.login)
-        profileVC.viewModel = viewModel
-        
-        profileVC.modalPresentationStyle = .fullScreen
-        navigationController?.pushViewController(profileVC, animated: true)
+        // ИСПРАВЛЕНО: Используем координатор для навигации
+        coordinator?.navigateToProfile(with: user)
     }
     
     private func showAlert(message: String) {
