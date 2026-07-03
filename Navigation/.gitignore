@@ -60,3 +60,13 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Firebase
+GoogleService-Info.plist
+
+# Derived Data
+DerivedData/
+
+# Xcode user data
+*.xcuserstate
+*.xcuserdatad
