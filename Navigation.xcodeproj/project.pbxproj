@@ -29,6 +29,7 @@
 		C8AFB76A2FEAA0F900D8B61D /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AFB7692FEAA0F900D8B61D /* NetworkService.swift */; };
 		C8C0C30C2F8505D800AADEC8 /* StorageService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8C0C3042F8505D800AADEC8 /* StorageService.framework */; };
 		C8C0C30D2F8505D800AADEC8 /* StorageService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C8C0C3042F8505D800AADEC8 /* StorageService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C8DDEFAB30416DA600FC693A /* LocalNotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DDEFAA30416DA600FC693A /* LocalNotificationsService.swift */; };
 		C8F264BB2FBF5455006CEFCF /* iOSIntPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C8F264BA2FBF5455006CEFCF /* iOSIntPackage */; };
 /* End PBXBuildFile section */
 
@@ -89,6 +90,7 @@
 		C8AFB7672FEAA0D600D8B61D /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
 		C8AFB7692FEAA0F900D8B61D /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		C8C0C3042F8505D800AADEC8 /* StorageService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StorageService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8DDEFAA30416DA600FC693A /* LocalNotificationsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationsService.swift; sourceTree = "<group>"; };
 		CD3241DEDF45916B2A60F112 /* Pods_StorageService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StorageService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E144C5D542BC63BB5C09D6FF /* Pods_Navigation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Navigation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -224,6 +226,7 @@
 		C8222E5D2E86935B00AC0F57 = {
 			isa = PBXGroup;
 			children = (
+				C8DDEFA930416D7200FC693A /* Notification */,
 				C892B44C2FF3FE5900D260B5 /* FireBase */,
 				C8535BB02FEAA6C5000CE39D /* JSON */,
 				C8AFB7662FEAA0BF00D8B61D /* AppConfiguration */,
@@ -284,6 +287,14 @@
 				C8AFB7692FEAA0F900D8B61D /* NetworkService.swift */,
 			);
 			path = AppConfiguration;
+			sourceTree = "<group>";
+		};
+		C8DDEFA930416D7200FC693A /* Notification */ = {
+			isa = PBXGroup;
+			children = (
+				C8DDEFAA30416DA600FC693A /* LocalNotificationsService.swift */,
+			);
+			path = Notification;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -525,6 +536,7 @@
 				C80BBEBF2FB4B32A00DC0772 /* Checker.swift in Sources */,
 				C81951882FD99B7B009BACB7 /* AppCoordinator.swift in Sources */,
 				C819518A2FD99B9D009BACB7 /* FeedCoordinator.swift in Sources */,
+				C8DDEFAB30416DA600FC693A /* LocalNotificationsService.swift in Sources */,
 				C819518C2FD99BD1009BACB7 /* ProfileCoordinator.swift in Sources */,
 				C892B44E2FF3FE7100D260B5 /* CheckerServiceProtocol.swift in Sources */,
 				C80BBEC92FB4B82C00DC0772 /* MyLoginFactory.swift in Sources */,
