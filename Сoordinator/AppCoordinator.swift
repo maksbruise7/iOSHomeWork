@@ -9,11 +9,9 @@ class AppCoordinator: Coordinator {
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.tabBarController = UITabBarController()
-        print("🏗️ AppCoordinator инициализирован")
     }
     
     func start() {
-        print("▶️ AppCoordinator.start() вызван")
         setupTabBar()
         setupCoordinators()
     }
@@ -21,7 +19,6 @@ class AppCoordinator: Coordinator {
     private func setupTabBar() {
         navigationController.setViewControllers([tabBarController], animated: false)
         navigationController.isNavigationBarHidden = true
-        print("✅ TabBar настроен")
     }
     
     private func setupCoordinators() {
@@ -41,8 +38,5 @@ class AppCoordinator: Coordinator {
         
         feedCoordinator.start()
         profileCoordinator.start()
-        
-        print("✅ Координаторы запущены")
-        print("📊 Количество childCoordinators: \(childCoordinators.count)")
     }
 }
