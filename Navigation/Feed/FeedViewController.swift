@@ -4,6 +4,7 @@ import StorageService
 class FeedViewController: UIViewController {
     
     // MARK: - Properties
+    weak var coordinator: FeedCoordinator?
     private var feedModel: FeedModel!
     
     // MARK: - UI Components
@@ -44,12 +45,24 @@ class FeedViewController: UIViewController {
         return label
     }()
     
-    // Существующая кнопка Post (заменяем на CustomButton)
     private let postButton: CustomButton = {
         let button = CustomButton(
             title: "Перейти к посту",
             titleColor: .white,
             backgroundColor: .systemGreen,
+            font: .systemFont(ofSize: 16, weight: .semibold),
+            cornerRadius: 10,
+            height: 44
+        )
+        return button
+    }()
+    
+    // Новая кнопка для сетевого запроса
+    private let networkRequestButton: CustomButton = {
+        let button = CustomButton(
+            title: "Выполнить сетевой запрос",
+            titleColor: .white,
+            backgroundColor: .systemPurple,
             font: .systemFont(ofSize: 16, weight: .semibold),
             cornerRadius: 10,
             height: 44
@@ -75,27 +88,28 @@ class FeedViewController: UIViewController {
         view.addSubview(checkGuessButton)
         view.addSubview(resultLabel)
         view.addSubview(postButton)
+        view.addSubview(networkRequestButton)
         
         setupConstraints()
     }
     
     private func setupModel() {
-        // Загаданное слово (можете изменить на любое другое)
         feedModel = FeedModel(secretWord: "swift")
-        
-        // Для отладки (можно убрать перед релизом)
         print("🎮 Загаданное слово: \(feedModel.getSecretWord())")
     }
     
     private func setupActions() {
-        // Обработчик для кнопки проверки слова
         checkGuessButton.setAction { [weak self] in
             self?.checkGuess()
         }
         
-        // Обработчик для кнопки перехода к посту
         postButton.setAction { [weak self] in
-            self?.showPost()
+            let post = Post(title: "New Post")
+            self?.coordinator?.showPostViewController(with: post)
+        }
+        
+        networkRequestButton.setAction { [weak self] in
+            self?.performNetworkRequest()
         }
     }
     
@@ -105,48 +119,40 @@ class FeedViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Поле ввода
             textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             textField.heightAnchor.constraint(equalToConstant: 44),
             
-            // Кнопка проверки слова
             checkGuessButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20),
             checkGuessButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             checkGuessButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            // Лейбл с результатом
             resultLabel.topAnchor.constraint(equalTo: checkGuessButton.bottomAnchor, constant: 30),
             resultLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             resultLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            // Кнопка перехода к посту
-            postButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
+            postButton.topAnchor.constraint(equalTo: resultLabel.bottomAnchor, constant: 30),
             postButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            postButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            postButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            networkRequestButton.topAnchor.constraint(equalTo: postButton.bottomAnchor, constant: 16),
+            networkRequestButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            networkRequestButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
     }
     
     // MARK: - Game Logic
     private func checkGuess() {
-        // Скрываем клавиатуру
         view.endEditing(true)
         
-        // Проверяем, что текст не пустой
         guard let guessedText = textField.text, !guessedText.isEmpty else {
             showEmptyFieldWarning()
             return
         }
         
-        // Проверяем слово через модель
         let isCorrect = feedModel.check(word: guessedText)
-        
-        // Обновляем UI с результатом
         updateResultLabel(isCorrect: isCorrect, guessedWord: guessedText)
-        
-        // Очищаем поле для следующей попытки (опционально)
-        // textField.text = ""
     }
     
     private func showEmptyFieldWarning() {
@@ -167,11 +173,19 @@ class FeedViewController: UIViewController {
         }
     }
     
-    // MARK: - Navigation
-    @objc private func showPost() {
-        let post = Post(title: "New Post")
-        let postVC = PostViewController(post: post)
-        navigationController?.pushViewController(postVC, animated: true)
+    // MARK: - Network Request
+    private func performNetworkRequest() {
+        // Создаем случайную конфигурацию
+        let config = AppConfiguration.random()
+        
+        resultLabel.text = "🔄 Выполняется запрос к \(config.description)..."
+        resultLabel.textColor = .systemBlue
+        
+        // Выполняем сетевой запрос
+        NetworkService.request(for: config)
+        
+        resultLabel.text = "✅ Запрос выполнен! Смотрите консоль."
+        resultLabel.textColor = .systemGreen
     }
     
     // MARK: - Animations

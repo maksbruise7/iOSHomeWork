@@ -2,7 +2,8 @@ import UIKit
 import StorageService
 
 class PostViewController: UIViewController {
-
+    
+    weak var coordinator: FeedCoordinator?
     var post: Post
     
     init(post: Post) {
@@ -16,21 +17,19 @@ class PostViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .green
+        view.backgroundColor = .white
         title = post.title
-        let play = UIBarButtonItem(
-            title: "New controller ",
+        
+        let infoButton = UIBarButtonItem(
+            title: "Info",
             style: .plain,
             target: self,
-            action: #selector(clickPush)
+            action: #selector(showInfoViewController)
         )
-        navigationItem.rightBarButtonItem = play
+        navigationItem.rightBarButtonItem = infoButton
     }
-
-    @objc func clickPush() {
-        let next = InfoViewController()
-        next.modalPresentationStyle = .formSheet
-        next.modalTransitionStyle = .coverVertical
-        present(next, animated: true, completion: nil)
-     }
+    
+    @objc func showInfoViewController() {
+        coordinator?.showInfoViewController()
+    }
 }

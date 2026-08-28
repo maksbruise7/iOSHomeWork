@@ -5,6 +5,7 @@ import SnapKit
 class ProfileViewController: UIViewController {
     
     // MARK: - Properties
+    weak var coordinator: ProfileCoordinator?
     var viewModel: ProfileViewModel!
     private var cancellables = Set<AnyCancellable>()
     
@@ -36,12 +37,13 @@ class ProfileViewController: UIViewController {
         setupViews()
         setupBindings()
         setupActions()
+        setupNavigationBar()
         viewModel.loadUser()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -68,8 +70,56 @@ class ProfileViewController: UIViewController {
         }
     }
     
+    // Обновленная настройка навигационной панели
+    private func setupNavigationBar() {
+        navigationItem.title = "Profile"
+        
+        // Кнопка "Выйти" слева
+        let logoutButton = UIBarButtonItem(
+            title: "Выйти",
+            style: .plain,
+            target: self,
+            action: #selector(logoutTapped)
+        )
+        logoutButton.tintColor = .systemRed
+        navigationItem.leftBarButtonItem = logoutButton
+        
+        // Кнопка "Info" справа (НОВАЯ)
+        let infoButton = UIBarButtonItem(
+            title: "Info",
+            style: .plain,
+            target: self,
+            action: #selector(showInfoViewController)
+        )
+        infoButton.tintColor = .systemBlue
+        navigationItem.rightBarButtonItem = infoButton
+        
+        navigationController?.navigationBar.tintColor = .systemBlue
+        navigationController?.navigationBar.prefersLargeTitles = false
+    }
+    
+    // MARK: - Actions
+    @objc private func logoutTapped() {
+        let alert = UIAlertController(
+            title: "Выход",
+            message: "Вы уверены, что хотите выйти из аккаунта?",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Выйти", style: .destructive) { [weak self] _ in
+            self?.coordinator?.logout()
+        })
+        
+        present(alert, animated: true)
+    }
+    
+    @objc private func showInfoViewController() {
+        // Используем координатор для перехода
+        coordinator?.showInfoViewController()
+    }
+    
     private func setupBindings() {
-        // Подписываемся на изменения пользователя
         viewModel.$user
             .receive(on: DispatchQueue.main)
             .sink { [weak self] user in
@@ -78,7 +128,6 @@ class ProfileViewController: UIViewController {
             }
             .store(in: &cancellables)
         
-        // Подписываемся на состояние загрузки
         viewModel.$isLoading
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoading in
@@ -90,7 +139,6 @@ class ProfileViewController: UIViewController {
             }
             .store(in: &cancellables)
         
-        // Подписываемся на ошибки
         viewModel.$errorMessage
             .receive(on: DispatchQueue.main)
             .sink { [weak self] error in
@@ -100,7 +148,6 @@ class ProfileViewController: UIViewController {
             }
             .store(in: &cancellables)
         
-        // Подписываемся на изменение статуса
         viewModel.$statusText
             .receive(on: DispatchQueue.main)
             .sink { [weak self] status in
@@ -156,7 +203,7 @@ extension ProfileViewController: UITableViewDataSource {
         if section == 0 {
             return 1
         } else {
-            return contentTable.count  // contentTable это [PostArray]
+            return contentTable.count
         }
     }
     
@@ -166,7 +213,7 @@ extension ProfileViewController: UITableViewDataSource {
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostTableViewCell
-            cell.configure(with: contentTable[indexPath.row])  // Передаем PostArray
+            cell.configure(with: contentTable[indexPath.row])
             return cell
         }
     }
@@ -185,8 +232,7 @@ extension ProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 0 {
-            let photosVC = PhotosViewController()
-            navigationController?.pushViewController(photosVC, animated: true)
+            coordinator?.showPhotosViewController()
         }
     }
 }

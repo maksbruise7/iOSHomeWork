@@ -1,18 +1,17 @@
 import UIKit
+import FirebaseAuth
 
 class LogInViewController: UIViewController {
     
-    // MARK: - Properties
+    weak var coordinator: LoginCoordinator?
+    var loginDelegate: LoginViewControllerDelegate?
+    
     lazy var profileView: ProfileTableHederView = {
         let view = ProfileTableHederView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    var userService: UserService?
-    var loginDelegate: LoginViewControllerDelegate?
-    
-    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -20,109 +19,93 @@ class LogInViewController: UIViewController {
         constraints()
         setupButtonTarget()
         notification()
-        setupUserService()
         
-        #if DEBUG
-        print("📍 DEBUG режим")
-        profileView.logInAccount.text = "test_user"
+        profileView.logInAccount.text = "test@example.com"
         profileView.password.text = "test123"
-        #else
-        print("📍 RELEASE режим")
-        #endif
-    }
-    
-    private func setupUserService() {
-        #if DEBUG
-        let users = DataProvider.getTestUsers()
-        userService = TestUserService(users: users)
-        #else
-        let users = DataProvider.getRealUsers()
-        userService = CurrentUserService(users: users)
-        #endif
+        
+        if loginDelegate == nil {
+            print("❌ loginDelegate не установлен!")
+        } else {
+            print("✅ loginDelegate установлен")
+        }
     }
     
     private func setupButtonTarget() {
         profileView.logInButton.setAction { [weak self] in
-            self?.loginButtonTapped()
+            self?.handleLogin()
         }
     }
     
-    // MARK: - Actions
-    @objc private func loginButtonTapped() {
+    private func handleLogin() {
         view.endEditing(true)
         
-        guard let login = profileView.logInAccount.text, !login.isEmpty,
-              let password = profileView.password.text, !password.isEmpty else {
+        guard let rawEmail = profileView.logInAccount.text,
+              let rawPassword = profileView.password.text else {
             showAlert(message: "Пожалуйста, заполните все поля")
             return
         }
         
+        let email = rawEmail.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let password = rawPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard !email.isEmpty, !password.isEmpty else {
+            showAlert(message: "Пожалуйста, заполните все поля")
+            return
+        }
+        
+        guard isValidEmail(email) else {
+            showAlert(message: "Пожалуйста, введите корректный email адрес (пример: user@example.com)")
+            return
+        }
+        
+        guard password.count >= 6 else {
+            showAlert(message: "Пароль должен содержать минимум 6 символов")
+            return
+        }
+        
         guard let delegate = loginDelegate else {
-            print("❌ Ошибка: loginDelegate не установлен")
             showAlert(message: "Ошибка сервиса авторизации")
             return
         }
         
-        let isValidCredentials = delegate.check(login: login, password: password)
+        print("🔍 Попытка входа: '\(email)'")
+        showLoading(true)
         
-        if !isValidCredentials {
-            showAlert(message: "Неверный логин или пароль")
-            return
+        delegate.checkCredentials(email: email, password: password) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.showLoading(false)
+                switch result {
+                case .success(let user):
+                    print("✅ Успешный вход: \(user.fullName)")
+                    self?.coordinator?.navigateToProfile(with: user)
+                case .failure(let error):
+                    print("❌ Ошибка: \(error.localizedDescription)")
+                    self?.showAlert(message: error.localizedDescription)
+                }
+            }
         }
-        
-        guard let user = userService?.getUser(byLogin: login) else {
-            showAlert(message: "Пользователь с таким логином не найден")
-            return
-        }
-        
-        print("✅ Успешный вход! Пользователь: \(user.fullName)")
-        navigateToProfile(with: user)
     }
     
-    // ИСПРАВЛЕННЫЙ МЕТОД НАВИГАЦИИ
-    private func navigateToProfile(with user: User) {
-        let profileVC = ProfileViewController()
-        
-        // Создаем ViewModel с сервисом и логином пользователя
-        #if DEBUG
-        let users = DataProvider.getTestUsers()
-        let userService: UserService = TestUserService(users: users)
-        #else
-        let users = DataProvider.getRealUsers()
-        let userService: UserService = CurrentUserService(users: users)
-        #endif
-        
-        let viewModel = ProfileViewModel(userService: userService, userLogin: user.login)
-        profileVC.viewModel = viewModel
-        
-        profileVC.modalPresentationStyle = .fullScreen
-        navigationController?.pushViewController(profileVC, animated: true)
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPred = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
+        return emailPred.evaluate(with: email)
+    }
+    
+    private func showLoading(_ isLoading: Bool) {
+        profileView.logInButton.isEnabled = !isLoading
+        profileView.logInButton.setTitle(isLoading ? "Загрузка..." : "Log in", for: .normal)
     }
     
     private func showAlert(message: String) {
-        let alert = UIAlertController(
-            title: "Ошибка",
-            message: message,
-            preferredStyle: .alert
-        )
+        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
     
-    // MARK: - Keyboard Handling
     func notification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -149,7 +132,6 @@ class LogInViewController: UIViewController {
     }
 }
 
-// MARK: - UITextFieldDelegate
 extension LogInViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
