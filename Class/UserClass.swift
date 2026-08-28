@@ -1,6 +1,5 @@
 import UIKit
 
-// MARK: - User Model
 class User {
     let login: String
     let fullName: String
@@ -17,16 +16,13 @@ class User {
     }
 }
 
-// MARK: - User Service Protocol
 protocol UserService {
     func getUser(byLogin login: String) -> User?
 }
 
-// MARK: - Current User Service (Release)
 class CurrentUserService: UserService {
     private let users: [String: User]
     
-//      Данные передаются через инициализатор
     init(users: [User]) {
         var usersDict = [String: User]()
         for user in users {
@@ -40,11 +36,9 @@ class CurrentUserService: UserService {
     }
 }
 
-// MARK: - Test User Service (Debug)
 class TestUserService: UserService {
     private let users: [String: User]
     
-//      Данные передаются через инициализатор
     init(users: [User]) {
         var usersDict = [String: User]()
         for user in users {

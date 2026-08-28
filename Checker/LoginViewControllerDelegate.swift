@@ -1,5 +1,6 @@
 import Foundation
 
-protocol LoginViewControllerDelegate {
-    func check(login: String, password: String) -> Bool
+protocol LoginViewControllerDelegate: AnyObject {
+    func checkCredentials(email: String, password: String, completion: @escaping (Result<User, Error>) -> Void)
+    func signUp(email: String, password: String, completion: @escaping (Result<User, Error>) -> Void)
 }
