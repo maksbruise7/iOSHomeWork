@@ -1,11 +1,19 @@
 platform :ios, '16.0'
 
-target 'Navigation' do
-  use_frameworks!
-  
+def common_pods
   pod 'Firebase/Core'
   pod 'Firebase/Auth'
   pod 'SnapKit', '~> 5.6.0'
+end
+
+target 'Navigation' do
+  use_frameworks!
+  common_pods
+end
+
+target 'NavigationTests' do
+  use_frameworks!
+  common_pods
 end
 
 target 'StorageService' do
