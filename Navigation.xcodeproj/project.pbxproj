@@ -29,10 +29,18 @@
 		C8AFB76A2FEAA0F900D8B61D /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AFB7692FEAA0F900D8B61D /* NetworkService.swift */; };
 		C8C0C30C2F8505D800AADEC8 /* StorageService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8C0C3042F8505D800AADEC8 /* StorageService.framework */; };
 		C8C0C30D2F8505D800AADEC8 /* StorageService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C8C0C3042F8505D800AADEC8 /* StorageService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C8DDEFAB30416DA600FC693A /* LocalNotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DDEFAA30416DA600FC693A /* LocalNotificationsService.swift */; };
 		C8F264BB2FBF5455006CEFCF /* iOSIntPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C8F264BA2FBF5455006CEFCF /* iOSIntPackage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C8AE3FC030416ADE00BFEA51 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C8222E5E2E86935B00AC0F57 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C8222E652E86935B00AC0F57;
+			remoteInfo = Navigation;
+		};
 		C8C0C30A2F8505D800AADEC8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C8222E5E2E86935B00AC0F57 /* Project object */;
@@ -78,9 +86,11 @@
 		C892B44D2FF3FE7100D260B5 /* CheckerServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckerServiceProtocol.swift; sourceTree = "<group>"; };
 		C892B44F2FF3FE8900D260B5 /* CheckerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckerService.swift; sourceTree = "<group>"; };
 		C8AB2BA82F9A63CF00DA3732 /* UserClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClass.swift; sourceTree = "<group>"; };
+		C8AE3FBC30416ADE00BFEA51 /* NavigationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NavigationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8AFB7672FEAA0D600D8B61D /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
 		C8AFB7692FEAA0F900D8B61D /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		C8C0C3042F8505D800AADEC8 /* StorageService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StorageService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8DDEFAA30416DA600FC693A /* LocalNotificationsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationsService.swift; sourceTree = "<group>"; };
 		CD3241DEDF45916B2A60F112 /* Pods_StorageService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StorageService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E144C5D542BC63BB5C09D6FF /* Pods_Navigation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Navigation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -89,9 +99,19 @@
 		C884C68D2FEABC2A00447812 /* Exceptions for "Navigation" folder in "Navigation" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Feed/FeedViewModelTests.swift,
+				Feed/LoginViewModelTests.swift,
 				Info.plist,
 			);
 			target = C8222E652E86935B00AC0F57 /* Navigation */;
+		};
+		C8AE3FC630416B5B00BFEA51 /* Exceptions for "Navigation" folder in "NavigationTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Feed/FeedViewModelTests.swift,
+				Feed/LoginViewModelTests.swift,
+			);
+			target = C8AE3FBB30416ADE00BFEA51 /* NavigationTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -100,8 +120,19 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				C884C68D2FEABC2A00447812 /* Exceptions for "Navigation" folder in "Navigation" target */,
+				C8AE3FC630416B5B00BFEA51 /* Exceptions for "Navigation" folder in "NavigationTests" target */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		C8AE3FB030416AA700BFEA51 /* NavigationTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NavigationTests;
+			sourceTree = "<group>";
+		};
+		C8AE3FBD30416ADE00BFEA51 /* NavigationTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NavigationTests;
 			sourceTree = "<group>";
 		};
 		C8C0C3052F8505D800AADEC8 /* StorageService */ = {
@@ -119,6 +150,13 @@
 				C8F264BB2FBF5455006CEFCF /* iOSIntPackage in Frameworks */,
 				C8C0C30C2F8505D800AADEC8 /* StorageService.framework in Frameworks */,
 				218B5FE877D9FEFE1ED52390 /* Pods_Navigation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C8AE3FB930416ADE00BFEA51 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +226,7 @@
 		C8222E5D2E86935B00AC0F57 = {
 			isa = PBXGroup;
 			children = (
+				C8DDEFA930416D7200FC693A /* Notification */,
 				C892B44C2FF3FE5900D260B5 /* FireBase */,
 				C8535BB02FEAA6C5000CE39D /* JSON */,
 				C8AFB7662FEAA0BF00D8B61D /* AppConfiguration */,
@@ -197,6 +236,8 @@
 				C80BBEC52FB4B7FE00DC0772 /* Factory */,
 				C8222E682E86935B00AC0F57 /* Navigation */,
 				C8C0C3052F8505D800AADEC8 /* StorageService */,
+				C8AE3FB030416AA700BFEA51 /* NavigationTests */,
+				C8AE3FBD30416ADE00BFEA51 /* NavigationTests */,
 				C8222E672E86935B00AC0F57 /* Products */,
 				756B8639CDEA389D726CBBB7 /* Pods */,
 				C25EC4254EA61FE58EADBDE1 /* Frameworks */,
@@ -208,6 +249,7 @@
 			children = (
 				C8222E662E86935B00AC0F57 /* Navigation.app */,
 				C8C0C3042F8505D800AADEC8 /* StorageService.framework */,
+				C8AE3FBC30416ADE00BFEA51 /* NavigationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -245,6 +287,14 @@
 				C8AFB7692FEAA0F900D8B61D /* NetworkService.swift */,
 			);
 			path = AppConfiguration;
+			sourceTree = "<group>";
+		};
+		C8DDEFA930416D7200FC693A /* Notification */ = {
+			isa = PBXGroup;
+			children = (
+				C8DDEFAA30416DA600FC693A /* LocalNotificationsService.swift */,
+			);
+			path = Notification;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -287,6 +337,29 @@
 			productReference = C8222E662E86935B00AC0F57 /* Navigation.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C8AE3FBB30416ADE00BFEA51 /* NavigationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C8AE3FC230416ADE00BFEA51 /* Build configuration list for PBXNativeTarget "NavigationTests" */;
+			buildPhases = (
+				C8AE3FB830416ADE00BFEA51 /* Sources */,
+				C8AE3FB930416ADE00BFEA51 /* Frameworks */,
+				C8AE3FBA30416ADE00BFEA51 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C8AE3FC130416ADE00BFEA51 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C8AE3FBD30416ADE00BFEA51 /* NavigationTests */,
+			);
+			name = NavigationTests;
+			packageProductDependencies = (
+			);
+			productName = NavigationTests;
+			productReference = C8AE3FBC30416ADE00BFEA51 /* NavigationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		C8C0C3032F8505D800AADEC8 /* StorageService */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C8C0C3112F8505D800AADEC8 /* Build configuration list for PBXNativeTarget "StorageService" */;
@@ -316,11 +389,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2630;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					C8222E652E86935B00AC0F57 = {
 						CreatedOnToolsVersion = 16.4;
+					};
+					C8AE3FBB30416ADE00BFEA51 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = C8222E652E86935B00AC0F57;
 					};
 					C8C0C3032F8505D800AADEC8 = {
 						CreatedOnToolsVersion = 26.3;
@@ -347,12 +424,20 @@
 			targets = (
 				C8222E652E86935B00AC0F57 /* Navigation */,
 				C8C0C3032F8505D800AADEC8 /* StorageService */,
+				C8AE3FBB30416ADE00BFEA51 /* NavigationTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		C8222E642E86935B00AC0F57 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C8AE3FBA30416ADE00BFEA51 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -451,6 +536,7 @@
 				C80BBEBF2FB4B32A00DC0772 /* Checker.swift in Sources */,
 				C81951882FD99B7B009BACB7 /* AppCoordinator.swift in Sources */,
 				C819518A2FD99B9D009BACB7 /* FeedCoordinator.swift in Sources */,
+				C8DDEFAB30416DA600FC693A /* LocalNotificationsService.swift in Sources */,
 				C819518C2FD99BD1009BACB7 /* ProfileCoordinator.swift in Sources */,
 				C892B44E2FF3FE7100D260B5 /* CheckerServiceProtocol.swift in Sources */,
 				C80BBEC92FB4B82C00DC0772 /* MyLoginFactory.swift in Sources */,
@@ -459,6 +545,13 @@
 				C80BBEC22FB4B3A800DC0772 /* LoginViewControllerDelegate.swift in Sources */,
 				C85C15852FBF43C300A4C48C /* DataProvider.swift in Sources */,
 				C8AB2BA92F9A63CF00DA3732 /* UserClass.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C8AE3FB830416ADE00BFEA51 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,6 +565,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C8AE3FC130416ADE00BFEA51 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C8222E652E86935B00AC0F57 /* Navigation */;
+			targetProxy = C8AE3FC030416ADE00BFEA51 /* PBXContainerItemProxy */;
+		};
 		C8C0C30B2F8505D800AADEC8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C8C0C3032F8505D800AADEC8 /* StorageService */;
@@ -666,6 +764,50 @@
 			};
 			name = Release;
 		};
+		C8AE3FC330416ADE00BFEA51 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = bruise.NavigationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Navigation.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Navigation";
+			};
+			name = Debug;
+		};
+		C8AE3FC430416ADE00BFEA51 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = bruise.NavigationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Navigation.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Navigation";
+			};
+			name = Release;
+		};
 		C8C0C30F2F8505D800AADEC8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2FBDC43D9ED25124D73E49F4 /* Pods-StorageService.debug.xcconfig */;
@@ -763,6 +905,15 @@
 			buildConfigurations = (
 				C8222E7A2E86935B00AC0F57 /* Debug */,
 				C8222E7B2E86935B00AC0F57 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C8AE3FC230416ADE00BFEA51 /* Build configuration list for PBXNativeTarget "NavigationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C8AE3FC330416ADE00BFEA51 /* Debug */,
+				C8AE3FC430416ADE00BFEA51 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

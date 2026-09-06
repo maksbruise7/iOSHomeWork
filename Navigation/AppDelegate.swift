@@ -1,13 +1,19 @@
 import UIKit
 import FirebaseCore
 import FirebaseAuth
+import UserNotifications  
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Инициализация Firebase
         FirebaseApp.configure()
         print("✅ Firebase сконфигурирован")
+        
+        // ✅ Регистрация локальных уведомлений
+        LocalNotificationsService.shared.registerForLatestUpdatesIfPossible()
+        
         return true
     }
 

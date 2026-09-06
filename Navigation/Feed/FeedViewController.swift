@@ -1,5 +1,6 @@
 import UIKit
 import StorageService
+import UserNotifications
 
 class FeedViewController: UIViewController {
     
@@ -57,12 +58,24 @@ class FeedViewController: UIViewController {
         return button
     }()
     
-    // Новая кнопка для сетевого запроса
     private let networkRequestButton: CustomButton = {
         let button = CustomButton(
             title: "Выполнить сетевой запрос",
             titleColor: .white,
             backgroundColor: .systemPurple,
+            font: .systemFont(ofSize: 16, weight: .semibold),
+            cornerRadius: 10,
+            height: 44
+        )
+        return button
+    }()
+    
+    // ✅ НОВАЯ КНОПКА ДЛЯ ТЕСТА УВЕДОМЛЕНИЙ
+    private let testNotificationButton: CustomButton = {
+        let button = CustomButton(
+            title: "📢 Тест уведомления (через 5 сек)",
+            titleColor: .white,
+            backgroundColor: .systemOrange,
             font: .systemFont(ofSize: 16, weight: .semibold),
             cornerRadius: 10,
             height: 44
@@ -77,6 +90,9 @@ class FeedViewController: UIViewController {
         setupModel()
         setupActions()
         setupTextFieldDelegate()
+        
+        // ✅ Проверка статуса уведомлений при загрузке
+        checkNotificationStatus()
     }
     
     // MARK: - Setup
@@ -89,6 +105,7 @@ class FeedViewController: UIViewController {
         view.addSubview(resultLabel)
         view.addSubview(postButton)
         view.addSubview(networkRequestButton)
+        view.addSubview(testNotificationButton)  // ✅ ДОБАВЛЯЕМ НОВУЮ КНОПКУ
         
         setupConstraints()
     }
@@ -110,6 +127,11 @@ class FeedViewController: UIViewController {
         
         networkRequestButton.setAction { [weak self] in
             self?.performNetworkRequest()
+        }
+        
+        // ✅ ДЕЙСТВИЕ ДЛЯ КНОПКИ ТЕСТА УВЕДОМЛЕНИЙ
+        testNotificationButton.setAction { [weak self] in
+            self?.testNotification()
         }
     }
     
@@ -138,7 +160,13 @@ class FeedViewController: UIViewController {
             
             networkRequestButton.topAnchor.constraint(equalTo: postButton.bottomAnchor, constant: 16),
             networkRequestButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            networkRequestButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            networkRequestButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            // ✅ КОНСТРЕЙНТЫ ДЛЯ НОВОЙ КНОПКИ
+            testNotificationButton.topAnchor.constraint(equalTo: networkRequestButton.bottomAnchor, constant: 16),
+            testNotificationButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            testNotificationButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            testNotificationButton.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
     }
     
@@ -175,17 +203,83 @@ class FeedViewController: UIViewController {
     
     // MARK: - Network Request
     private func performNetworkRequest() {
-        // Создаем случайную конфигурацию
         let config = AppConfiguration.random()
         
         resultLabel.text = "🔄 Выполняется запрос к \(config.description)..."
         resultLabel.textColor = .systemBlue
         
-        // Выполняем сетевой запрос
         NetworkService.request(for: config)
         
         resultLabel.text = "✅ Запрос выполнен! Смотрите консоль."
         resultLabel.textColor = .systemGreen
+    }
+    
+    // MARK: - Notification Testing
+    
+    /// Проверка статуса уведомлений
+    private func checkNotificationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            let status: String
+            switch settings.authorizationStatus {
+            case .authorized:
+                status = "✅ Разрешены"
+            case .denied:
+                status = "❌ Запрещены"
+            case .notDetermined:
+                status = "⏳ Не определено"
+            case .provisional:
+                status = "⚠️ Временные"
+            @unknown default:
+                status = "❓ Неизвестно"
+            }
+            print("📱 Статус уведомлений: \(status)")
+        }
+    }
+    
+    /// Тестовое уведомление через 5 секунд
+    private func testNotification() {
+        // 1. Проверяем разрешение
+        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+            guard settings.authorizationStatus == .authorized else {
+                DispatchQueue.main.async {
+                    self?.resultLabel.text = "⚠️ Уведомления запрещены! Включите в настройках."
+                    self?.resultLabel.textColor = .orange
+                }
+                return
+            }
+            
+            // 2. Создаем контент
+            let content = UNMutableNotificationContent()
+            content.title = "📱 Тест уведомления"
+            content.body = "Это тестовое уведомление! Приложение работает корректно. ✅"
+            content.sound = .default
+            content.badge = 1
+            
+            // 3. Триггер через 5 секунд
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+            
+            // 4. Запрос
+            let request = UNNotificationRequest(
+                identifier: "test_notification",
+                content: content,
+                trigger: trigger
+            )
+            
+            // 5. Отправка
+            UNUserNotificationCenter.current().add(request) { error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        print("❌ Ошибка: \(error.localizedDescription)")
+                        self?.resultLabel.text = "❌ Ошибка: \(error.localizedDescription)"
+                        self?.resultLabel.textColor = .red
+                    } else {
+                        print("✅ Тестовое уведомление запланировано через 5 секунд")
+                        self?.resultLabel.text = "✅ Уведомление придет через 5 секунд!"
+                        self?.resultLabel.textColor = .systemGreen
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - Animations
