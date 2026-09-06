@@ -1,12 +1,14 @@
 import UIKit
 import StorageService
 import UserNotifications
+import Combine
 
 class FeedViewController: UIViewController {
     
     // MARK: - Properties
     weak var coordinator: FeedCoordinator?
-    private var feedModel: FeedModel!
+    private var viewModel: FeedViewModel!
+    private var cancellables = Set<AnyCancellable>()  // ✅ Для подписок
     
     // MARK: - UI Components
     private let textField: UITextField = {
@@ -70,7 +72,6 @@ class FeedViewController: UIViewController {
         return button
     }()
     
-    // ✅ НОВАЯ КНОПКА ДЛЯ ТЕСТА УВЕДОМЛЕНИЙ
     private let testNotificationButton: CustomButton = {
         let button = CustomButton(
             title: "📢 Тест уведомления (через 5 сек)",
@@ -86,16 +87,21 @@ class FeedViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewModel()
         setupView()
-        setupModel()
         setupActions()
         setupTextFieldDelegate()
-        
-        // ✅ Проверка статуса уведомлений при загрузке
+        setupBindings()
         checkNotificationStatus()
     }
     
     // MARK: - Setup
+    
+    private func setupViewModel() {
+        viewModel = FeedViewModel()
+        print("🎮 Загаданное слово: \(viewModel.getSecretWord())")
+    }
+    
     private func setupView() {
         view.backgroundColor = .white
         title = "Feed"
@@ -105,22 +111,20 @@ class FeedViewController: UIViewController {
         view.addSubview(resultLabel)
         view.addSubview(postButton)
         view.addSubview(networkRequestButton)
-        view.addSubview(testNotificationButton)  // ✅ ДОБАВЛЯЕМ НОВУЮ КНОПКУ
+        view.addSubview(testNotificationButton)
         
         setupConstraints()
     }
     
-    private func setupModel() {
-        feedModel = FeedModel(secretWord: "swift")
-        print("🎮 Загаданное слово: \(feedModel.getSecretWord())")
-    }
-    
     private func setupActions() {
+        // ✅ Используем ViewModel
         checkGuessButton.setAction { [weak self] in
-            self?.checkGuess()
+            guard let text = self?.textField.text else { return }
+            self?.viewModel.updateState(viewInput: .checkButtonDidTap(text: text))
         }
         
         postButton.setAction { [weak self] in
+            self?.viewModel.updateState(viewInput: .pushButtonDidTap)
             let post = Post(title: "New Post")
             self?.coordinator?.showPostViewController(with: post)
         }
@@ -129,7 +133,6 @@ class FeedViewController: UIViewController {
             self?.performNetworkRequest()
         }
         
-        // ✅ ДЕЙСТВИЕ ДЛЯ КНОПКИ ТЕСТА УВЕДОМЛЕНИЙ
         testNotificationButton.setAction { [weak self] in
             self?.testNotification()
         }
@@ -162,7 +165,6 @@ class FeedViewController: UIViewController {
             networkRequestButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             networkRequestButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            // ✅ КОНСТРЕЙНТЫ ДЛЯ НОВОЙ КНОПКИ
             testNotificationButton.topAnchor.constraint(equalTo: networkRequestButton.bottomAnchor, constant: 16),
             testNotificationButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             testNotificationButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
@@ -170,53 +172,62 @@ class FeedViewController: UIViewController {
         ])
     }
     
-    // MARK: - Game Logic
-    private func checkGuess() {
-        view.endEditing(true)
-        
-        guard let guessedText = textField.text, !guessedText.isEmpty else {
-            showEmptyFieldWarning()
-            return
-        }
-        
-        let isCorrect = feedModel.check(word: guessedText)
-        updateResultLabel(isCorrect: isCorrect, guessedWord: guessedText)
-    }
+    // MARK: - Bindings (Combine)
     
-    private func showEmptyFieldWarning() {
-        resultLabel.text = "⚠️ Пожалуйста, введите слово!"
-        resultLabel.textColor = .orange
-        shakeTextField()
-    }
-    
-    private func updateResultLabel(isCorrect: Bool, guessedWord: String) {
-        if isCorrect {
-            resultLabel.text = "✅ Правильно! Слово '\(guessedWord)' угадано!"
-            resultLabel.textColor = .systemGreen
-            showSuccessAnimation()
-        } else {
-            resultLabel.text = "❌ Неправильно! Слово '\(guessedWord)' не совпадает. Попробуйте еще раз!"
-            resultLabel.textColor = .systemRed
-            shakeTextField()
-        }
+    private func setupBindings() {
+        // ✅ Подписка на изменение сообщения
+        viewModel.$resultMessage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                self?.resultLabel.text = message
+            }
+            .store(in: &cancellables)
+        
+        // ✅ Подписка на изменение цвета
+        viewModel.$resultColor
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] color in
+                switch color {
+                case "green":
+                    self?.resultLabel.textColor = .systemGreen
+                case "red":
+                    self?.resultLabel.textColor = .systemRed
+                case "orange":
+                    self?.resultLabel.textColor = .orange
+                case "blue":
+                    self?.resultLabel.textColor = .systemBlue
+                default:
+                    self?.resultLabel.textColor = .darkGray
+                }
+            }
+            .store(in: &cancellables)
+        
+        // ✅ Подписка на состояние (для анимаций)
+        viewModel.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                if case .checked(let result) = state {
+                    if result {
+                        self?.showSuccessAnimation()
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
     
     // MARK: - Network Request
+    
     private func performNetworkRequest() {
         let config = AppConfiguration.random()
-        
         resultLabel.text = "🔄 Выполняется запрос к \(config.description)..."
         resultLabel.textColor = .systemBlue
-        
         NetworkService.request(for: config)
-        
         resultLabel.text = "✅ Запрос выполнен! Смотрите консоль."
         resultLabel.textColor = .systemGreen
     }
     
     // MARK: - Notification Testing
     
-    /// Проверка статуса уведомлений
     private func checkNotificationStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             let status: String
@@ -236,9 +247,7 @@ class FeedViewController: UIViewController {
         }
     }
     
-    /// Тестовое уведомление через 5 секунд
     private func testNotification() {
-        // 1. Проверяем разрешение
         UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
             guard settings.authorizationStatus == .authorized else {
                 DispatchQueue.main.async {
@@ -248,24 +257,19 @@ class FeedViewController: UIViewController {
                 return
             }
             
-            // 2. Создаем контент
             let content = UNMutableNotificationContent()
             content.title = "📱 Тест уведомления"
             content.body = "Это тестовое уведомление! Приложение работает корректно. ✅"
             content.sound = .default
             content.badge = 1
             
-            // 3. Триггер через 5 секунд
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-            
-            // 4. Запрос
             let request = UNNotificationRequest(
                 identifier: "test_notification",
                 content: content,
                 trigger: trigger
             )
             
-            // 5. Отправка
             UNUserNotificationCenter.current().add(request) { error in
                 DispatchQueue.main.async {
                     if let error = error {
@@ -283,6 +287,7 @@ class FeedViewController: UIViewController {
     }
     
     // MARK: - Animations
+    
     private func shakeTextField() {
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
         animation.timingFunction = CAMediaTimingFunction(name: .linear)
@@ -307,7 +312,8 @@ extension FeedViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        checkGuess()
+        guard let text = textField.text else { return true }
+        viewModel.updateState(viewInput: .checkButtonDidTap(text: text))
         return true
     }
     
